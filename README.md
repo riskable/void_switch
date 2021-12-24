@@ -1,2 +1,2 @@
-# void_switch
-3D printable magnetic separation contactless key switch and stabilizers (OpenSCAD and Kicad files)
+# Void Switch OpenSCAD
+3D printable magnetic separation contactless key switch and stabilizers (OpenSCAD files).  For the Kicad files see the void_switch_kicad repo.
