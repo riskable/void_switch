@@ -49,3 +49,10 @@ For reference, even terrible printers seem to do a fine job printined Void Switc
 ## Video tutorials/gifs on how to aseemble Void Switches and stabilizers are coming soon!
 
 I'll also be taking a series of photos and detailing the process here.
+
+## What a keyboard using Void Switches looks like
+Here's the keyboard I've been typing on every day for several months:
+
+![OpenSCAD Customizer](/assets/images/riskeyboard_70_top_removal.gif)
+
+This is my Riskeyboard 70.  Since Void Switches are entirely contactless I made the case so that the entire top plate could be easily removed (it's magnetically attached with the same 4x2mm magnets used in the switches/stabs).  It makes it *super* easy to clean: Just take the top plate to your kitchen sink and give it a good scrub with soap and water!
