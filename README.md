@@ -1,5 +1,5 @@
 # Void Switch OpenSCAD Files
-3D printable magnetic separation contactless key switch and stabilizers (OpenSCAD files).  For the Kicad files see the [void_switch_kicad](https://github.com/riskable/void_switch_kicad) repo.
+Parametric 3D printable magnetic separation contactless key switch and stabilizers (OpenSCAD files).  For the Kicad files see the [void_switch_kicad](https://github.com/riskable/void_switch_kicad) repo.
 
 ![OpenSCAD Customizer](/assets/images/assembled_switch.gif)
 
@@ -16,6 +16,9 @@ For reference, there's two magnets in the switch itself (one in the sheath and o
 Prerendered (4mm travel) void switch files are provided in .stl and .3mf format for 4x1.7mm (most common) and 4x2mm magnets with a `MAGNET_VOID` of 0.6mm.  This should make for an all-around decent set of parameters for doing quick tests and demos (to see how the switch feels).  For your own keyboard make sure you try out many different `MAGNET_VOID` values and also try changing the `STEM_TOLERANCE` value to see how you like tighter-fitting or looser-fitting switches.
 
 ## Parameters
+
+![OpenSCAD Customizer](/assets/images/tunable_switch_parameters.jpg)
+
 Descriptions of what each parameter does are included in the .scad file and are easily referenced in the OpenSCAD customizer:
 
 ![OpenSCAD Customizer](/assets/images/openscad_customizer.png)
