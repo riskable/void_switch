@@ -3,6 +3,10 @@
 
 ![OpenSCAD Customizer](/assets/images/assembled_switch.gif)
 
+For a detailed overview of how Void Switches work see Chyrosran22's Teardown video:
+
+[![Void Switch Teardown Video](/assets/images/chyrosran22_teardown.jpg)](https://youtu.be/H_Ym9528awM)
+
 ## BOM
 Each switch needs three 4x2mm magnets (Note: Most cheap N35 magnets are actually 4x1.7mm *which is fine*) and the stabilizers require two 4x2mm magnets and some 18 gauge stainless steel wire (make sure it's magnetic; use the cheap stuff).  *Both of these are configurable*, however.  So if you want to make a switch that uses 3x2mm magnets you can do that (with a bit of work changing settings around).
 
