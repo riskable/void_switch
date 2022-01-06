@@ -42,7 +42,7 @@ For reference, even terrible printers seem to do a fine job printined Void Switc
 
 **Tip:** Once the sheath is snapped into the body I find it's best to give it a gentle squeeze with some pliers:
 
-![Using pliers on sheath and body together](/assets/images/switch_assembly2.png)
+![Using pliers on sheath and body together](/assets/images/switch_assembly2.jpg)
 
 **Tip:** If you find your magnets aren't staying put (and you don't want to fix the tolerances/print new ones) *you can always just use some glue*.  I find that CA glue (superglue) works great for this.  Just make sure to use the accelerator stuff or it might not stick as well.
 
