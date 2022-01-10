@@ -63,3 +63,13 @@ Here's the keyboard I've been typing on every day for several months:
 ![OpenSCAD Customizer](/assets/images/riskeyboard_70_top_removal.gif)
 
 This is my Riskeyboard 70.  Since Void Switches are entirely contactless I made the case so that the entire top plate could be easily removed (it's magnetically attached with the same 4x2mm magnets used in the switches/stabs).  It makes it *super* easy to clean: Just take the top plate to your kitchen sink and give it a good scrub with soap and water!
+
+## What keycaps to use with Void Switches
+
+Void Switches (currently) use Cherry MX-compatible cross (+) stems so you can use any Cherry-MX compatible keycaps.  Having said that, it is highly recommended that you 3D print your own keycaps for Void Switches!  Try making your own with my [Keycap Playground](https://github.com/riskable/keycap_playground).  3D printed keycaps are superior to injection moulded keycaps in many ways:
+
+ * PETG keycaps _feel_ fantastic!  They also have a very deep sound profile.  PETG is also a fantastic light pipe (that's what it was invented for!) which means multi-material prints with clear legends have the best clarity/brightness.  If you "just use white" PETG you can get very crisp, clear legends and the keycap will light up the same color as your LEDs.
+ * PLA keycaps can be made using all sorts of interesting and amazing filaments (_they can have sparkles!_).  They have a sound profile similar to PBT keycaps (high pitch).
+ * TPU keycaps are very easy on your fingers and very quiet.  Any 92A or harder TPU can be used for keycaps without any special modifications (yes, the stems will still work fine and won't be "floppy" or whatever).
+
+**NOTE:** Void Switches currently only support the Cherry MX-style cross (+) but support for other stem types can be added (places in the code were carved out for this).  If someone wants to add support for other types feel free to submit a PR.  It might be a better idea to make a stem/slider that simlply accepts a "topper" that lets you attach/support an adapter that lets you put whatever stem type you want on there.
