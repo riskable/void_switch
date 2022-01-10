@@ -72,4 +72,6 @@ Void Switches (currently) use Cherry MX-compatible cross (+) stems so you can us
  * PLA keycaps can be made using all sorts of interesting and amazing filaments (_they can have sparkles!_).  They have a sound profile similar to PBT keycaps (high pitch).
  * TPU keycaps are very easy on your fingers and very quiet.  Any 92A or harder TPU can be used for keycaps without any special modifications (yes, the stems will still work fine and won't be "floppy" or whatever).
 
+![White PETG TOTAL BS keycap](/assets/images/total_bs_keycap.jpg)
+
 **NOTE:** Void Switches currently only support the Cherry MX-style cross (+) but support for other stem types can be added (places in the code were carved out for this).  If someone wants to add support for other types feel free to submit a PR.  It might be a better idea to make a stem/slider that simlply accepts a "topper" that lets you attach/support an adapter that lets you put whatever stem type you want on there.
