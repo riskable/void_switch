@@ -71,6 +71,7 @@ Void Switches (currently) use Cherry MX-compatible cross (+) stems so you can us
  * PETG keycaps _feel_ fantastic!  They also have a very deep sound profile.  PETG is also a fantastic light pipe (that's what it was invented for!) which means multi-material prints with clear legends have the best clarity/brightness.  If you "just use white" PETG you can get very crisp, clear legends and the keycap will light up the same color as your LEDs.
  * PLA keycaps can be made using all sorts of interesting and amazing filaments (_they can have sparkles!_).  They have a sound profile similar to PBT keycaps (high pitch).
  * TPU keycaps are very easy on your fingers and very quiet.  Any 92A or harder TPU can be used for keycaps without any special modifications (yes, the stems will still work fine and won't be "floppy" or whatever).
+ * If they break or get ugly or whatever _you can always print new ones_!  For pennies worth of filament!
 
 ![White PETG TOTAL BS keycap](/assets/images/total_bs_keycap.jpg)
 
