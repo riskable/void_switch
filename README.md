@@ -75,4 +75,4 @@ Void Switches (currently) use Cherry MX-compatible cross (+) stems so you can us
 
 ![White PETG TOTAL BS keycap](/assets/images/total_bs_keycap.jpg)
 
-**NOTE:** Void Switches currently only support the Cherry MX-style cross (+) but support for other stem types can be added (places in the code were carved out for this).  If someone wants to add support for other types feel free to submit a PR.  It might be a better idea to make a stem/slider that simlply accepts a "topper" that lets you attach/support an adapter that lets you put whatever stem type you want on there.
+**NOTE:** Void Switches currently only support the Cherry MX-style cross (+) but support for other stem types can be added (places in the code were carved out for this).  If someone wants to add support for other types feel free to submit a PR.  It might be a better idea to make a stem/slider that simply accepts a "topper" that lets you attach/support an adapter that lets you put whatever stem type you want on there.
