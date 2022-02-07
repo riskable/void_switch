@@ -174,12 +174,21 @@ CHERRY_CROSS_LENGTH = 4; // Length of the - and the | in the +
 // Try to calculate the strength of the switch in grams and output that to the console
 display_magnet_strength(BODY_MAGNET_DIAMETER, BODY_MAGNET_HEIGHT, MAGNET_VOID, strength=MAGNET_STRENGTH);
 
+segments = 14;
+
+function anim(segment) =
+    let (min = segment / segments,
+    max = (segment + 1) / segments )
+    $t < min? 0: ($t >= max? 1.0: ($t - min) / (max - min)) ;
+
 // These variables are used below for placement of things:
 sheath_height = STEM_DIAMETER+SHEATH_WALL_THICKNESS*2;
 sheath_width = STEM_DIAMETER+SHEATH_WALL_THICKNESS*2;
 // Render the selected items
 for (item=RENDER) {
     if (item=="body") {
+        translate([0,0,10 * anim(1)])
+        rotate([180 * anim(2), 0, 0])
         switch_body(
             BODY_LENGTH, BODY_WIDTH, TOTAL_TRAVEL,
             taper=BODY_TAPER,
@@ -294,6 +303,12 @@ for (item=RENDER) {
             bridge_thickness=BRIDGE_THICKNESS,
             sheath_snug_magnet=SHEATH_HOLDS_MAGNET);
     } else if (item=="sheath") {
+        translate([0,0,10 * anim(3)])
+        translate([0,0,10 * anim(4)])
+        translate([-0.25 * anim(6),-4.75 * anim(6),-10 * anim(6)])
+        translate([0,0,-14.5 * anim(7)])
+        rotate([-90 * anim(4), 0, 45 * anim(5)])
+        translate([-BODY_LENGTH*1.00/sqrt(2) * anim(5),-BODY_LENGTH*1.00/sqrt(2) * anim(5),0])
         translate([BODY_LENGTH/1.05,0,0]) // Move it over to the side (but keep it tight so we can print more at a time!)
             rotate([0,0,0]) // Line it up
                 sheath_cherry_cross(SHEATH_LENGTH, STEM_DIAMETER, TOTAL_TRAVEL, COVER_THICKNESS,
@@ -343,6 +358,11 @@ for (item=RENDER) {
                     bottom_clip_width=SHEATH_BOTTOM_CLIP_WIDTH,
                     snug_magnet=SHEATH_HOLDS_MAGNET);
     } else if (item=="stem") {
+        translate([BODY_LENGTH/1.25 * anim(8),TOTAL_TRAVEL/1.15 * anim(8),-10 * anim(8)])
+        translate([0,0,22.5 * anim(11)])
+        translate([-2.25 * anim(10),3.5 * anim(10),0])
+        rotate([0,0,45 * anim(10)])
+        rotate([-90 * anim(9),0,0])
         translate([-BODY_LENGTH/1.25,-TOTAL_TRAVEL/1.15,0]) // STEM
             rotate([0,0,0]) // Line it up so we can bring it closer
                 stem_cherry_cross(TOTAL_TRAVEL, STEM_DIAMETER, SHEATH_LENGTH, WALL_THICKNESS, COVER_THICKNESS,
@@ -490,4 +510,4 @@ for (item=RENDER) {
 /* CHANGELOG:
     1.0:
         * Initial release.
-*/
+*/ 
