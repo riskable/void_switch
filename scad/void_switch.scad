@@ -57,9 +57,9 @@ STEM_TOLERANCE = 0.13; // [0.01:0.01:0.3]
 // NOTE: You can visualize STEM_TOLERANCE by uncommenting the "visualize" RENDER bits at the top of this file.
 // Diameter of the magnet that sits on top of the switch body
 BODY_MAGNET_DIAMETER = 4; // [3:1:5]
-// Thickness of the top magnet (use calipers to measure it!). NOTE: Cheap "4x2mm" N35 magnets are usually 4x1.7 or 4x1.8mm.
+// Thickness of the top magnet (use calipers to measure it!). NOTE: Cheap "4x2mm" N35 magnets are usually 4x1.7 or 4x1.8mm.  MEASURE YOUR MAGNETS WITH CALIPERS TO CHECK!
 BODY_MAGNET_HEIGHT = 1.7; // [1:0.1:3]
-// NOTE: MEASURE YOUR MAGNETS WITH CALIPERS! CHINESE SELLERS LIE! ~1.7mm is the norm for "4x2mm" N35 magnets... Bastards
+// NOTE: CHINESE SELLERS LIE! ~1.7mm is the norm for "4x2mm" N35 magnets... Bastards
 
 // Only used when calculating the strength of your switch (it gets spit out to the OpenSCAD console... "NOTE: ESTIMATED STRENGTH/FORCE: ~56g")
 MAGNET_STRENGTH = "N35"; // [N35, N42, N45, N52]
@@ -71,18 +71,24 @@ STEM_MAGNET_HEIGHT = BODY_MAGNET_HEIGHT; // The switch body/stem will be automat
 
 /* [Advanced Stuff] */
 
+// Controls how thick the - part of the Cherry stem cross (+) will be.  Increase this if your keycaps are too loose.  Use a negative value if your keycaps are too tight.
+STEM_CROSS_X_EXTRA = 0.0; // [-0.3:0.05:0.3]
+// Controls how thick the | part of the Cherry stem cross (+) will be.  Increase this if your keycaps are too loose.  Use a negative value if your keycaps are too tight.
+STEM_CROSS_Y_EXTRA = 0.0; // [-0.3:0.05:0.3]
 // Wiggle room (from a magnet height perspective, not from a diameter perspective)
 MAGNET_TOLERANCE = 0.1;
-// Negative tolerance by default to hold the magnet tight (really press it in there). PLA and PETG should flex a bit and hold it strongly. For resin you'll probably want to set this to 0.
+// How much room (diameter-wise) the magnet gets inside the stem.  Negative tolerance by default to hold the magnet tight (really press it in there). PLA and PETG should flex a bit and hold it strongly. For resin you'll probably want to set this to 0 and put some resin in the hole before inserting the magnet to hold it nice and strong.
 STEM_MAGNET_DIAMETER_TOLERANCE = -0.1;
 // TIP FOR RESIN PRINTERS: Set STEM_MAGNET_DIAMETER_TOLERANCE to 0 or 0.05 to avoid cracking and and squirt some resin in there before inserting the magnet for a strong hold.
-// How much plastic goes around the magnets (not usually important; you can make this smaller if you use a nozzle smaller than 0.4mm)
+// How much plastic goes around the magnets (not usually important; you can make this smaller if you use a nozzle smaller than 0.4mm to increase your switch's maximum theoretical strength)
 MAGNET_WALL_THICKNESS = 0.5;
 // NOTE: MAGNET_WALL_THICKNESS is constrained by the STEM_DIAMETER.  So if it's not getting thicker on the sides you'll need to increase STEM_DIAMETER to give it more room.
 // Length of the switch_body() (See related: COVER_OVERHANG below)
 BODY_LENGTH = 14.2;
 // Width of the switch_body() (Seriously: Look at COVER_OVERHANG!)
 BODY_WIDTH = 14.2;
+// Technically the body doesn't need to be the same height as the sheath and stem are long.  If this is set to anything other than 0 the body will be of the height specified.  Otherwise its height will be calculated based on the length of the sheath.  AT LEAST 6 IS RECOMMENDED (so the clips will work).
+BODY_HEIGHT = 0;
 // How thick the walls (just the sides) of the switch will be (in general)
 WALL_THICKNESS = 1.35;
 // How much the lip sticks out above the top of the switch body.
@@ -94,13 +100,13 @@ SHEATH_LIP_HEIGHT = 1; // [0.5:0.1:1.5]
 COVER_THICKNESS = 0.5; // [0:0.1:1.5]
 // How much the top_cover() will overhang the switch_body() so it doesn't fall through the top of the keyboard/plate. Set to 0 for flush mount.
 COVER_OVERHANG = 0.6; // [0:0.1:1.5]
-// Controls the position of the magnet in the switch body and the sheath. Don't mess with this unless you know what you're doing.
+// Controls the Z position of the magnet in the switch body and the sheath. Don't mess with this unless you know what you're doing.
 BODY_MAGNET_COVER_THICKNESS = 0.0; // [-1.5:0.1:1.5]
 // NOTE: THIN MAGNETS MAY NEED ADJUSTMENT TO BODY_MAGNET_COVER_THICKNESS
 // Makes up for a little bit of drooping in the magnet holder since it's a bridge printing over air. Leave this setting alone unless you find that the "seat" that prevents the magnet from falling through isn't printing correctly.
 MAGNET_BRIDGE_DROOP = 0.2;
-// How thick bridges will be (e.g. the little lines that go under the clips in the body)
-BRIDGE_THICKNESS = 0.3;
+// How thick bridges will be (e.g. the little lines that go under the clips in the body). They're supposed to be thin enough to "give way" (a bit) when you snap the switch into the top plate.
+CLIP_BRIDGE_THICKNESS = 0.3;
 // So we can calculate where to place the snap clips on the sides. For normal plates use 1.5mm.  For plates made out of a PCB use 1.6mm (usually).
 SWITCH_PLATE_THICKNESS = 1.5;
 // How much wiggle room the switch body gets inside the hole on your keyboard's top plate/cover. Leave this alone unless your switches are too tight or too loose when snapping them into the plate.
@@ -115,20 +121,30 @@ STEM_TOP_LENGTH = 4; // [2:0.1:4]
 // TIP: If making a low-profile keycap you migth want to reduce STEM_TOP_LENGTH a bit to save some vertical space.  Example: Low-profile Cherry MX style keycaps have ~3mm of room inside (I think) so you can set this to 3 if using keycaps like that.
 // In switch_body() it divides, BODY_WIDTH/BODY_TAPER to figure out how much smaller the bottom should be in relation to the top.  If you set this too large you can end up with walls that are too thin.  Also know that you don't *need* any taper at all... It just makes it easier to insert the switch into it's respective hole in your keyboard/switch plate.  Set it to 1 to disable tapering of the switch_body() (and just push it harder!).
 BODY_TAPER = 1.1;
+// How thick the walls of the sheath will be (the part the stem slides inside of)
 SHEATH_WALL_THICKNESS = 1.2; // Doesn't need to be quite as thick/strong as the switch's body
-SHEATH_TOLERANCE = 0.15; // How much wiggle room the sheath gets as it slides into the body
-SHEATH_MAGNET_DIAMETER_TOLERANCE = 0.1; // Magnet wiggle room (default: 0 for strong hold)
+// How much wiggle room the sheath gets as it slides into the body
+SHEATH_TOLERANCE = 0.15;
+// Wiggle room for the magnet where it gets inserted into the sheath (default: 0.1 for strong hold). NOTE: If you have problems with the sheath breaking when you insert the magnet just make this big (e.g. 0.25) and just use some glue.
+SHEATH_MAGNET_DIAMETER_TOLERANCE = 0.1;
 // TIP FOR RESIN PRINTERS: Resin tends to be brittle so to prevent cracking when inserting the magnet you may want to set SHEATH_MAGNET_DIAMETER_TOLERANCE to something like 0.1 and squirt some resin on the magnet after insertion to hold it in place.
-SHEATH_LIP_OVERHANG = 1; // How much the sheath lip sticks out on top of its sides
-SHEATH_NOTCH_ANGLE = 1; // Controls the "spread" of the notches >< on the (inside) sides of the sheath (they're rotated this many degrees so they get farther apart as the stem progresses down the length of the sheath; this is to ensure the least amount of friction when returning to keyup).  IF YOU INCREASE TRAVEL SIGNIFICANTLY YOU MAY WANT TO ADJUST THIS but otherwise probably leave it alone.
+// How much the sheath lip sticks out on top of the switch body
+SHEATH_LIP_OVERHANG = 1;
+// Controls the "spread" of the notches >< on the (inside) sides of the sheath (they're rotated this many degrees so they get farther apart as the stem progresses down the length of the sheath; this is to ensure the least amount of friction when returning to keyup).  IF YOU INCREASE TRAVEL SIGNIFICANTLY YOU MAY WANT TO ADJUST THIS but otherwise probably leave it alone.
+SHEATH_NOTCH_ANGLE = 1;
 // NOTE: Set SHEATH_NOTCH_ANGLE to 0 to have perfectly straight notches >< (not recommended).  If you do this you'll need to be more careful with your STEM_TOLERANCE setting.
-SHEATH_END_STOP_THICKNESS = 0.0; // How thick the little wall at the end of the sheath will be
+// How thick the little wall at the end of the sheath will be.  By default there's no wall/end stop which means that the stem can be easily removed but will also smack into whatever's underneath the switch when you press it (e.g. the sensor or LED on the PCB or the case covering those things).  If you set this to something like 0.8 you'll get a wall of sorts that prevents the stem from coming out (like, ever haha) and will also prevent it from hitting anything below the switch.  It makes it so you can press pretty hard on keycaps (to insert them) without having to worry that your brute strength will break your LEDs/sensors.  NOTE: This feature requires some flex in the plastic body of the sheath in order for the stem to snap into its channel so resin users be forewarned.
+SHEATH_END_STOP_THICKNESS = 0.0; // [0.0:0.1:1.2]
 // NOTE: If your keyboard has something underneath the switch at the correct TOTAL_TRAVEL distance you don't need the end stopper and can set SHEATH_END_STOP_THICKNESS to 0.  If you *do* want a stopper a value of 0.5 is usually good for a 0.4mm nozzle.
-// These control the little clips on the sheath that let it snap-fit into the body (probably leave these alone unless you're working with something other than PLA/PETG that's either much softer or much more brittle):
+// These SHEATH_CLIP_* parameters control the little clips on the sheath that let it snap-fit into the body (probably leave these alone unless you're working with something other than PLA/PETG that's either much softer or much more brittle)...
+// Controls the thickness of the clips on the side of the sheath (i.e. how much they stick out)
 SHEATH_CLIP_HEIGHT = 0.5;
+// Controls how long the clips on the side of the sheath will be (should only ever need to be adjusted if you make sigificant changes to SHEATH_WALL_THICKNESS)
 SHEATH_CLIP_LENGTH = 0.85;
+// Controls how tall (Z; when printing) the little clips on the side of the sheath will be
 SHEATH_CLIP_WIDTH = 2;
-SHEATH_BOTTOM_CLIP_WIDTH = 1.5; // Width of the channel on the bottom of the sheath
+// Controls the width of the notch for the sheath in the body and its matching cutout/channel on the underside of the sheath
+SHEATH_BOTTOM_CLIP_WIDTH = 1.5;
 
 // OpenSCAD's rendering resolution (64 worked well for me but feel free to go higher if you're patient--unlike me)
 $fn = 64;
@@ -204,8 +220,9 @@ for (item=RENDER) {
             droop_extra=MAGNET_BRIDGE_DROOP,
             stem_tolerance=STEM_TOLERANCE,
             sheath_clip_width=SHEATH_BOTTOM_CLIP_WIDTH,
-            bridge_thickness=BRIDGE_THICKNESS,
-            sheath_snug_magnet=SHEATH_HOLDS_MAGNET);
+            bridge_thickness=CLIP_BRIDGE_THICKNESS,
+            sheath_snug_magnet=SHEATH_HOLDS_MAGNET,
+            height=BODY_HEIGHT);
     } else if (item=="body+sheath") {
         switch_body(
             BODY_LENGTH, BODY_WIDTH, TOTAL_TRAVEL,
@@ -231,9 +248,10 @@ for (item=RENDER) {
             droop_extra=0,
             stem_tolerance=STEM_TOLERANCE,
             sheath_clip_width=0,
-            bridge_thickness=BRIDGE_THICKNESS,
+            bridge_thickness=CLIP_BRIDGE_THICKNESS,
             sheath_snug_magnet=SHEATH_HOLDS_MAGNET,
-            sheath_inside_body=true);
+            sheath_inside_body=true,
+            height=BODY_HEIGHT);
         sheath_overall_length = (
             (SHEATH_LENGTH
             +TOTAL_TRAVEL
@@ -291,8 +309,9 @@ for (item=RENDER) {
             droop_extra=MAGNET_BRIDGE_DROOP,
             stem_tolerance=STEM_TOLERANCE,
             sheath_clip_width=SHEATH_BOTTOM_CLIP_WIDTH,
-            bridge_thickness=BRIDGE_THICKNESS,
-            sheath_snug_magnet=SHEATH_HOLDS_MAGNET);
+            bridge_thickness=CLIP_BRIDGE_THICKNESS,
+            sheath_snug_magnet=SHEATH_HOLDS_MAGNET,
+            height=BODY_HEIGHT);
     } else if (item=="sheath") {
         translate([BODY_LENGTH/1.05,0,0]) // Move it over to the side (but keep it tight so we can print more at a time!)
             rotate([0,0,0]) // Line it up
@@ -356,7 +375,9 @@ for (item=RENDER) {
                     cross_length=STEM_TOP_LENGTH,
                     magnet_void=MAGNET_VOID,
                     top_magnet_cover_thickness=BODY_MAGNET_COVER_THICKNESS,
-                    flat_cross=STABILIZER_STEM);
+                    flat_cross=STABILIZER_STEM,
+                    cross_x_extra=STEM_CROSS_X_EXTRA,
+                    cross_y_extra=STEM_CROSS_Y_EXTRA);
     } else if (item=="stem_double_sided") {
         translate([-BODY_LENGTH/1.25,-TOTAL_TRAVEL/1.15,TOTAL_TRAVEL+COVER_THICKNESS+SHEATH_LIP_HEIGHT+SHEATH_LENGTH+STEM_MAGNET_HEIGHT+MAGNET_WALL_THICKNESS*2+MAGNET_TOLERANCE+MAGNET_VOID+BODY_MAGNET_HEIGHT]) // STEM
             rotate([-90,0,0]) // Line it up so we can bring it closer
@@ -371,7 +392,9 @@ for (item=RENDER) {
                     cross_length=STEM_TOP_LENGTH,
                     magnet_void=MAGNET_VOID,
                     top_magnet_cover_thickness=BODY_MAGNET_COVER_THICKNESS,
-                    flat_cross=STABILIZER_STEM);
+                    flat_cross=STABILIZER_STEM,
+                    cross_x_extra=STEM_CROSS_X_EXTRA,
+                    cross_y_extra=STEM_CROSS_Y_EXTRA);
     } else if (item=="visualize_keyup") {
         rotate([0,0,-90]) translate([
             -sheath_height/2+SHEATH_WALL_THICKNESS*1.5-STEM_TOLERANCE,
@@ -418,7 +441,9 @@ for (item=RENDER) {
                     cross_length=STEM_TOP_LENGTH,
                     magnet_void=MAGNET_VOID,
                     top_magnet_cover_thickness=BODY_MAGNET_COVER_THICKNESS,
-                    flat_cross=STABILIZER_STEM);
+                    flat_cross=STABILIZER_STEM,
+                    cross_x_extra=STEM_CROSS_X_EXTRA,
+                    cross_y_extra=STEM_CROSS_Y_EXTRA);
     } else if (item=="visualize_keydown") {
         rotate([0,0,-90]) translate([
             -2.2, 2.2,
@@ -463,7 +488,9 @@ for (item=RENDER) {
                     cross_length=STEM_TOP_LENGTH,
                     magnet_void=MAGNET_VOID,
                     top_magnet_cover_thickness=BODY_MAGNET_COVER_THICKNESS,
-                    flat_cross=STABILIZER_STEM);
+                    flat_cross=STABILIZER_STEM,
+                    cross_x_extra=STEM_CROSS_X_EXTRA,
+                    cross_y_extra=STEM_CROSS_Y_EXTRA);
     } else if (item=="switch_plate") { // Make a pretend switch plate
         color([0.7,0.7,0.7,0.1]) translate([0,0,SWITCH_PLATE_THICKNESS/2+COVER_THICKNESS])
             difference() {

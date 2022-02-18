@@ -148,9 +148,9 @@ module uplifting_jigaroo(length, width, stem_diameter=CHERRY_CYLINDER_DIAMETER, 
 }
 
 // This makes the + bit that slides *in* to a Cherry MX style keycap:
-module cherry_cross(length=CHERRY_CROSS_LENGTH, extra_length=0, extra_width=0) {
+module cherry_cross(length=CHERRY_CROSS_LENGTH, y_adjust=0, x_adjust=0) {
     linear_extrude(height=length) {
-        square([CHERRY_CROSS_THICKNESS_Y+extra_length, CHERRY_CROSS_LENGTH+extra_width], center=true);
-        square([CHERRY_CROSS_LENGTH+extra_length, CHERRY_CROSS_THICKNESS_X+extra_width], center=true);
+        square([CHERRY_CROSS_THICKNESS_X+x_adjust, CHERRY_CROSS_LENGTH], center=true);
+        square([CHERRY_CROSS_LENGTH, CHERRY_CROSS_THICKNESS_Y+y_adjust], center=true);
     }
 }
