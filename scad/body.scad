@@ -244,6 +244,7 @@ module switch_body(length, width, travel, taper=1.1, wall_thickness=1.4, sheath_
             }
         }
         // Visualize the magnet too
+        if ($t == 0) // but not if we're animating assembly.
         translate([
 //          -stem_diameter/4-top_magnet_diameter/1.75,
 //          -stem_diameter/4-top_magnet_diameter/1.75,
