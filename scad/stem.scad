@@ -9,7 +9,7 @@ SENSOR_OFFSET = [3.25,3.25]; // How far away the hall effect sensor (or reed swi
 CHERRY_SWITCH_LENGTH = 15.6;
 CHERRY_SWITCH_WIDTH = 15.6;
 CHERRY_CYLINDER_DIAMETER = 5.47; // Represents the keycap's stem (female side of the +)
-CHERRY_STEM_HEIGHT = 4.5; // How far the underside of the keycap extends into the stem()
+CHERRY_CROSS_HEIGHT = 3.5; // How far the underside of the keycap extends into the stem()
 // NOTE: These CHERRY_CROSS_THICKNESS_* values are from the official spec
 CHERRY_CROSS_THICKNESS_X = 1.31; // Width of the - in the + (Measured: 1.26-1.31)
 CHERRY_CROSS_THICKNESS_Y = 1.09; // Width of the | in the + (Measured: 1.09-1.1)
@@ -37,7 +37,7 @@ CHERRY_LED_PIN_2_Y_DISTANCE = 2.54;
 
 // Generates a cross (+) style Cherry MX stem:
 // NOTE: notch_angle only applies when using extra_tolerance (void space feature)
-module stem_cherry_cross(travel, diameter, sheath_length, wall_thickness, cover_thickness, magnet_height=2, magnet_diameter=4, magnet_tolerance=0, magnet_diameter_tolerance=-0.1, magnet_wall_thickness=0.5, lip_height=1, magnet_void=0.2, body_magnet_height=2, extra_tolerance=0, cross_length=CHERRY_CROSS_LENGTH, top_magnet_cover_thickness=-0.5, notch_angle=1, flat_cross=false, cross_x_extra=0, cross_y_extra=0) {
+module stem_cherry_cross(travel, diameter, sheath_length, wall_thickness, cover_thickness, magnet_height=2, magnet_diameter=4, magnet_tolerance=0, magnet_diameter_tolerance=-0.1, magnet_wall_thickness=0.5, lip_height=1, magnet_void=0.2, body_magnet_height=2, extra_tolerance=0, cross_height=CHERRY_CROSS_HEIGHT, top_magnet_cover_thickness=-0.5, notch_angle=1, flat_cross=false, cross_x_extra=0, cross_y_extra=0) {
     total_travel = travel+sheath_length+cover_thickness+lip_height;
 //    magnet_distance = 2.25; // Magnet's (edge) distance from the center of the switch (MUST BE UNCHANGING!)
     magnet_distance = sqrt((SENSOR_OFFSET[0]*SENSOR_OFFSET[0])+(SENSOR_OFFSET[1]*SENSOR_OFFSET[1]));
@@ -57,10 +57,10 @@ module stem_cherry_cross(travel, diameter, sheath_length, wall_thickness, cover_
                     translate([0,0,stem_length])
                         if (flat_cross) {
                             translate([0,0,0])
-                                cherry_cross(cross_length, y_adjust=cross_y_extra, x_adjust=cross_x_extra);
+                                cherry_cross(cross_height, y_adjust=cross_y_extra, x_adjust=cross_x_extra);
                         } else {
                             rotate([0,0,45])
-                                cherry_cross(cross_length, y_adjust=cross_y_extra, x_adjust=cross_x_extra);
+                                cherry_cross(cross_height, y_adjust=cross_y_extra, x_adjust=cross_x_extra);
                         }
             // Add a cylinder that will represent the TOTAL_TRAVEL of the switch
                     difference() {
@@ -638,8 +638,8 @@ module stem_cherry_cross_split(travel, diameter, sheath_length, wall_thickness, 
 }
 
 // This makes the + bit that slides *in* to a Cherry MX style keycap:
-module cherry_cross(length=CHERRY_CROSS_LENGTH, y_adjust=0, x_adjust=0) {
-    linear_extrude(height=length) {
+module cherry_cross(height=CHERRY_CROSS_HEIGHT, y_adjust=0, x_adjust=0) {
+    linear_extrude(height=height) {
         square([CHERRY_CROSS_THICKNESS_X+x_adjust, CHERRY_CROSS_LENGTH], center=true);
         square([CHERRY_CROSS_LENGTH, CHERRY_CROSS_THICKNESS_Y+y_adjust], center=true);
     }

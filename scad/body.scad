@@ -68,18 +68,18 @@ module switch_body(length, width, travel, taper=1.1, wall_thickness=1.4, sheath_
                         squarish_rpoly(
                             xy=[length-wall_thickness*3.75, width-wall_thickness*3.75],
                             h=cover_thickness/2,
-                            r=corner_radius/4, center=true);
+                            r=corner_radius/1.5, center=true);
                         translate([0,0,body_height/4])
                             squarish_rpoly(
                                 xy=[length-wall_thickness*2, width-wall_thickness*2],
                                 h=cover_thickness/2,
-                                r=corner_radius/4, center=true);
+                                r=corner_radius/1.5, center=true);
                         translate([0,0,cover_thickness+sheath_depth+magnet_height+wall_thickness/2])
                             squarish_rpoly(
                                 xy=[length/taper-wall_thickness*1.25,
                                     width/taper-wall_thickness*1.25],
                                 h=cover_thickness,
-                                r=corner_radius/4, center=true);
+                                r=corner_radius/1.5, center=true);
                     }
                     // This gives the magnet a bit of a "seat" so it doesn't fall through:
                     translate([

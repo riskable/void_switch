@@ -24,7 +24,7 @@ use <utils.scad>
 /*
   NOTES:
     * EXPERIMENT!  Try all sorts of different configurations to find what you like and share your results!
-    * The body, sheath, and stem can be printed with 0.28mm layer height (including first layer) with a 0.4mm nozzle.  No need to go smaller (I haven't tested anything bigger).  Experiment!  See what works best with your printer!
+    * The body, sheath, and stem should be printed with 0.16mm layer height (including first layer) with a 0.4mm nozzle.  No need to go smaller.  Experiment!  See what works best with your printer!  FYI: The perfect layer height is actually dependent on your STEM_TOLERANCE setting...  It's just that with defaults 0.16mm is best.
     * So far the best results (smoothest switches) have come from printing the body, sheath, and stem in PETG.  However, PLA seems to work fine as well as Nylon (I tested Taulman Bridge).  If you want a *really quiet* switch print the stem in PCTPE or print just the top part (that holds the magnet) in something like TPU (as in, do a "color change" to TPU past the tallest point of the stem's main cylinder).
     * Lubricate your stems with something like Super Lube (any dielectric grease would be fine though) for the best experience.  YOU SHOULD NOT NEED TO SAND ANYTHING (unless your printer's tolerances are off).  NOTE: Sanding doesn't seem to make the switch "scratchy" (which surprised me).  You'd *think* it would but it doesn't...  Not with PETG anyway.
     * Printing everything in clear PETG is highly recommended if you plan to have an LED underneath!
@@ -89,6 +89,8 @@ BODY_LENGTH = 14.2;
 BODY_WIDTH = 14.2;
 // Technically the body doesn't need to be the same height as the sheath and stem are long.  If this is set to anything other than 0 the body will be of the height specified.  Otherwise its height will be calculated based on the length of the sheath.  AT LEAST 6 IS RECOMMENDED (so the clips will work).
 BODY_HEIGHT = 0;
+// The corner radius around the edges of the switch body
+BODY_CORNER_RADIUS = 0.5;
 // How thick the walls (just the sides) of the switch will be (in general)
 WALL_THICKNESS = 1.35;
 // How much the lip sticks out above the top of the switch body.
@@ -117,8 +119,8 @@ STEM_DIAMETER = 5.35;
 // "cherry_cross" is presently the only supported stem type (more stem options in the future, probably)
 STEM_TYPE = "cherry_cross"; // [cherry_cross]
 // How tall the + will be (or whatever goes into the underside of the keycap). Nearly all keycaps have 4mm stems but some low profile are shorter (e.g. 3mm).
-STEM_TOP_LENGTH = 4; // [2:0.1:4]
-// TIP: If making a low-profile keycap you migth want to reduce STEM_TOP_LENGTH a bit to save some vertical space.  Example: Low-profile Cherry MX style keycaps have ~3mm of room inside (I think) so you can set this to 3 if using keycaps like that.
+STEM_TOP_HEIGHT = 3.5; // [2:0.1:4]
+// TIP: If making a low-profile keycap you migth want to reduce STEM_TOP_HEIGHT a bit to save some vertical space.  Example: Low-profile Cherry MX style keycaps have ~3mm of room inside (I think) so you can set this to 3 if using keycaps like that.
 // In switch_body() it divides, BODY_WIDTH/BODY_TAPER to figure out how much smaller the bottom should be in relation to the top.  If you set this too large you can end up with walls that are too thin.  Also know that you don't *need* any taper at all... It just makes it easier to insert the switch into it's respective hole in your keyboard/switch plate.  Set it to 1 to disable tapering of the switch_body() (and just push it harder!).
 BODY_TAPER = 1.1;
 // How thick the walls of the sheath will be (the part the stem slides inside of)
@@ -183,10 +185,6 @@ STABILIZER_STEM = false;
 // This one will make it so that the magnet gets placed into the body first before snapping the sheath on top of it to hold it in place.  It's slightly harder to assemble this way but if you're using some stranger sheath configurations it can be a better way of doing things (glue is recommended):
 SHEATH_HOLDS_MAGNET = true;
 
-// CONSTANTS
-CHERRY_CROSS_LENGTH = 4; // Length of the - and the | in the +
-// NOTE: If you're making a low-profile switch you can usually get away with CHERRY_CROSS_LENGTH=3 (just make sure to use keycaps that also have a 3mm stem depth)
-
 // Try to calculate the strength of the switch in grams and output that to the console
 display_magnet_strength(BODY_MAGNET_DIAMETER, BODY_MAGNET_HEIGHT, MAGNET_VOID, strength=MAGNET_STRENGTH);
 
@@ -217,6 +215,7 @@ for (item=RENDER) {
             magnet_tolerance=MAGNET_TOLERANCE,
             magnet_void=MAGNET_VOID,
             sheath_end_stop_thickness=SHEATH_END_STOP_THICKNESS,
+            corner_radius=BODY_CORNER_RADIUS,
             droop_extra=MAGNET_BRIDGE_DROOP,
             stem_tolerance=STEM_TOLERANCE,
             sheath_clip_width=SHEATH_BOTTOM_CLIP_WIDTH,
@@ -245,6 +244,7 @@ for (item=RENDER) {
             magnet_tolerance=MAGNET_TOLERANCE,
             magnet_void=MAGNET_VOID,
             sheath_end_stop_thickness=SHEATH_END_STOP_THICKNESS,
+            corner_radius=BODY_CORNER_RADIUS,
             droop_extra=0,
             stem_tolerance=STEM_TOLERANCE,
             sheath_clip_width=0,
@@ -306,6 +306,7 @@ for (item=RENDER) {
             magnet_tolerance=MAGNET_TOLERANCE,
             magnet_void=MAGNET_VOID,
             sheath_end_stop_thickness=SHEATH_END_STOP_THICKNESS,
+            corner_radius=BODY_CORNER_RADIUS,
             droop_extra=MAGNET_BRIDGE_DROOP,
             stem_tolerance=STEM_TOLERANCE,
             sheath_clip_width=SHEATH_BOTTOM_CLIP_WIDTH,
@@ -372,7 +373,7 @@ for (item=RENDER) {
                     magnet_diameter_tolerance=STEM_MAGNET_DIAMETER_TOLERANCE,
                     lip_height=SHEATH_LIP_HEIGHT,
                     body_magnet_height=BODY_MAGNET_HEIGHT,
-                    cross_length=STEM_TOP_LENGTH,
+                    cross_height=STEM_TOP_HEIGHT,
                     magnet_void=MAGNET_VOID,
                     top_magnet_cover_thickness=BODY_MAGNET_COVER_THICKNESS,
                     flat_cross=STABILIZER_STEM,
@@ -389,7 +390,7 @@ for (item=RENDER) {
                     magnet_diameter_tolerance=STEM_MAGNET_DIAMETER_TOLERANCE,
                     lip_height=SHEATH_LIP_HEIGHT,
                     body_magnet_height=BODY_MAGNET_HEIGHT,
-                    cross_length=STEM_TOP_LENGTH,
+                    cross_height=STEM_TOP_HEIGHT,
                     magnet_void=MAGNET_VOID,
                     top_magnet_cover_thickness=BODY_MAGNET_COVER_THICKNESS,
                     flat_cross=STABILIZER_STEM,
@@ -438,7 +439,7 @@ for (item=RENDER) {
                     magnet_diameter_tolerance=STEM_MAGNET_DIAMETER_TOLERANCE,
                     lip_height=SHEATH_LIP_HEIGHT,
                     body_magnet_height=BODY_MAGNET_HEIGHT,
-                    cross_length=STEM_TOP_LENGTH,
+                    cross_height=STEM_TOP_HEIGHT,
                     magnet_void=MAGNET_VOID,
                     top_magnet_cover_thickness=BODY_MAGNET_COVER_THICKNESS,
                     flat_cross=STABILIZER_STEM,
@@ -485,7 +486,7 @@ for (item=RENDER) {
                     magnet_diameter_tolerance=STEM_MAGNET_DIAMETER_TOLERANCE,
                     lip_height=SHEATH_LIP_HEIGHT,
                     body_magnet_height=BODY_MAGNET_HEIGHT,
-                    cross_length=STEM_TOP_LENGTH,
+                    cross_height=STEM_TOP_HEIGHT,
                     magnet_void=MAGNET_VOID,
                     top_magnet_cover_thickness=BODY_MAGNET_COVER_THICKNESS,
                     flat_cross=STABILIZER_STEM,
@@ -517,4 +518,15 @@ for (item=RENDER) {
 /* CHANGELOG:
     1.0:
         * Initial release.
+    1.1:
+        * Renamed STEM_TOP_LENGTH to STEM_TOP_HEIGHT since that better reflects what it controls and made the default 3.5 to match real-world Cherry cross stems.  Also renamed the cross_length argument in stem_cherry_cross() to cross_height.
+        * stem.scad: The CHERRY_STEM_HEIGHT constant was renamed to CHERRY_CROSS_HEIGHT to better reflect what it's for.  It was also changed from 4.5 to 3.5 because that's the height of a standard Cherry cross (+) stem (the 4.5 was just a typo).
+        * stem.scad: cherry_cross() had its length argument renamed to height to better reflect what it controls.
+        * void_switch.scad: You can now control the body's corner radius via the BODY_CORNER_RADIUS parameter.
+        * stabilizer.scad: Changed the wire_retention_arm() module to generate a completely different wire clip thing.  The new one is much skinnier than the old one and also more adjustable via some new parameters.  More importantly: IT NOW WORKS WITH LOW-PROFILE SWITCHES!  Yay!
+        * stabilizer.scad: Renamed stabilizer_riskey_cross() to stabilizer_body_cherry_cross() to better reflect what it generates.
+        * stabilizer.scad: Renamed riskey_stabilizer_stem_cherry_cross() to stabilizer_slider_cherry_cross() to better reflect what it generates.
+        * stabilizer.scad: You can now specify the height of the cross (+) just like you can in void_switch.scad.
+        * stabilizer.scad: You can now optionally add another (2x1mm) magnet to the stabilizer stem to further reduce the chance of unwanted noise in your stabilizer.  Right now this is hard-coded but I'll make it parametric in the future.
+        * stabilizer.scad: Removed old/unused cruft.
 */
