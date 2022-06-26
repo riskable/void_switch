@@ -16,7 +16,7 @@ module switch_body(length, width, travel, taper=1.1, wall_thickness=1.4, sheath_
         +magnet_void+sheath_end_stop_thickness); // NOTE: Does not include the lip_height on purpose
     // adjusted_magnet_wall_thickness = sheath_inside_body ? 0 : magnet_wall_thickness;
     body_height = height ? height : sheath_depth; // For clarity in the code
-    echo(body_height=body_height);
+//    echo(body_height=body_height);
     // NOTE: These two sheath variables need to match how they're handled in the actual sheath:
     sheath_width = stem_diameter+sheath_wall_thickness*2;
     sheath_height = stem_diameter+sheath_wall_thickness*2;

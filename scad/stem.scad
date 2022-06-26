@@ -56,11 +56,13 @@ module stem_cherry_cross(travel, diameter, sheath_length, wall_thickness, cover_
                 union() {
                     translate([0,0,stem_length])
                         if (flat_cross) {
-                            translate([0,0,0])
-                                cherry_cross(cross_height, y_adjust=cross_y_extra, x_adjust=cross_x_extra);
+                            cherry_cross(cross_height, y_adjust=cross_y_extra, x_adjust=cross_x_extra);
                         } else {
                             rotate([0,0,45])
                                 cherry_cross(cross_height, y_adjust=cross_y_extra, x_adjust=cross_x_extra);
+                // Uncomment this when you want to see the center point of the stem:
+//                            %rotate([0,0,45])
+//                                cylinder(d=0.25, h=stem_length*2, center=true);
                         }
             // Add a cylinder that will represent the TOTAL_TRAVEL of the switch
                     difference() {
@@ -68,10 +70,11 @@ module stem_cherry_cross(travel, diameter, sheath_length, wall_thickness, cover_
                             cylinder(
                                 d=diameter,
                                 h=stem_length-taper_length);
-                            translate([0,0,stem_length-taper_length]) cylinder(
-                                d1=diameter,
-                                d2=diameter-taper_length,
-                                h=taper_length);
+                            translate([0,0,stem_length-taper_length])
+                                cylinder(
+                                    d1=diameter,
+                                    d2=diameter-taper_length,
+                                    h=taper_length);
                             if (extra_tolerance) {
             // If we're doing a cutout we need the center of the stem to stick out the front a bit:
                                 translate([0,0,stem_length/4])
@@ -205,12 +208,16 @@ module stem_cherry_cross(travel, diameter, sheath_length, wall_thickness, cover_
                         0,
                         0,
                         flat_back_tolerance*2])
+                            // Generate a center mark so it's easy to line up when using the negative space cutout feature with things other than void_switch.scad
+                            translate([0,-CHERRY_CROSS_LENGTH/2,CHERRY_CROSS_LENGTH/3+extra_tolerance-flat_back_tolerance*2])
+                                rotate([90,0,0])
+                                    cylinder(d=0.1, h=stem_length*2.5, center=true);
                             difference() {
-                                translate([0,0,(magnet_diameter*2+wall_thickness*2)/2-flat_back_tolerance])
+                                translate([0,0,CHERRY_CROSS_LENGTH])
                                     cube([
                                         diameter+extra_tolerance*1.33,
                                         stem_length,
-                                        magnet_diameter*2+wall_thickness*2], center=true);
+                                        CHERRY_CYLINDER_DIAMETER/2+diameter], center=true);
         // Add the side notches (that prevent binding at the corner opposite the bottom of the sheath):
                                 translate([
                                     diameter/(1.5/(1+notch_angle/38))+extra_tolerance*1.65,

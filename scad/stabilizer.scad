@@ -2,7 +2,6 @@
 // NOTE: Requires 18 gauge wire bent into the correct length/u-shape.  The wire diameter is parametric though so you *can* use a different-sized wire if you want!
 
 // AUTHOR: Riskable <riskable@youknowwhat.com>
-// VERSION: 1.0 (Changelog is at the bottom)
 // LICENSE: TBD. Do not sell Void Switch stabilizers (yet!) but feel free to make your own for personal use.
 // LICENSING NOTE: If you want to sell keyboards/switches using this design just let me know and we'll work something out! I'll help you make awesome stuff!
 
@@ -27,15 +26,15 @@ TRAVEL = 4; // [1:0.1:20]
 // Copy setting from void_switch.scad
 BODY_MAGNET_DIAMETER = 4; // [3:1:5]
 // Copy setting from void_switch.scad
-BODY_MAGNET_HEIGHT = 2; // [1:0.1:3]
+BODY_MAGNET_HEIGHT = 1.8; // [1:0.1:3]
 // Copy setting from void_switch.scad
 MAGNET_WALL_THICKNESS = 0.5;
 // Copy setting from void_switch.scad
-COVER_THICKNESS = 0.8; // [0:0.1:1.5]
+COVER_THICKNESS = 0.6; // [0:0.1:1.5]
 // Copy setting from void_switch.scad
 PLATE_THICKNESS = 1.5; // [0:0.1:1.5]
 // Copy setting from void_switch.scad
-SHEATH_LIP_HEIGHT = 1; // [0.5:0.1:1.5]
+SHEATH_LIP_HEIGHT = 0.8; // [0.5:0.1:1.5]
 // Copy setting from void_switch.scad
 SHEATH_LENGTH = 0.3; // [0:0.1:2]
 // Copy setting from void_switch.scad
@@ -48,16 +47,18 @@ STEM_TOP_HEIGHT = 3.5;
 STEM_TOLERANCE = 0.25; // [0.1:0.1:0.5]
 // Controls how much extra room the wire gets in that little hole at the end of the stabilizer stem.
 STABILIZER_WIRE_TOLERANCE = 0.2; // [0.1:0.1:0.5]
+// Controls how much extra room the wire gets in the little wire clips that hold it in place (normally needs slightly more wiggle room than the stems)
+STABILIZER_WIRE_CLIP_TOLERANCE = 0.3; // [0.1:0.1:0.6]
 // The diameter of your steel wire.  NOTE: 18 gauge steel wire came in at 1.12mm when I measured it and 16 gauge came in at 1.6mm.
 STABILIZER_WIRE_DIAMETER = 1.12;
 // How far behind the stabilizer (and switch) body the wire will be (held via the clips)
-STABILIZER_WIRE_DISTANCE = 0.25;
+STABILIZER_WIRE_DISTANCE = 0.4;
 // Up/down wiggle room inside the stab body for the magnet
 MAGNET_TOLERANCE = 0.2; // [0.05:0.05:0.3]
 // Diameter of the stabilizer magnets (NOTE: Doesn't have to be the same as the switch!)
 STAB_MAGNET_DIAMETER = 4; // [3:1:5]
 // Thickness/height of the stabilizer magnets
-STAB_MAGNET_HEIGHT = 2; // [1:0.1:3]
+STAB_MAGNET_HEIGHT = 1.8; // [1:0.1:3]
 // Does the same thing as SHEATH_LIP_OVERHANG in void_switch.scad (how much the lip sticks out on the sides of the stab).
 LIP_OVERHANG = 0.65;
 
@@ -80,7 +81,7 @@ CHERRY_CROSS_LENGTH = 4; // Length of the - and the | in the +
 // The under-the-plate stab:
 stabilizer_body_cherry_cross(SHEATH_LENGTH, STABILIZER_STEM_DIAMETER, TRAVEL, PLATE_THICKNESS, stem_tolerance=STEM_TOLERANCE, sheath_tolerance=0.2, wall_thickness=WALL_THICKNESS, lip_height=SHEATH_LIP_HEIGHT, lip_overhang=LIP_OVERHANG, cross_height=STEM_TOP_HEIGHT, magnet_void=STAB_MAGNET_VOID, body_magnet_height=BODY_MAGNET_HEIGHT, body_magnet_diameter=BODY_MAGNET_DIAMETER, magnet_height=STAB_MAGNET_HEIGHT, magnet_diameter=STAB_MAGNET_DIAMETER, magnet_wall_thickness=MAGNET_WALL_THICKNESS, magnet_tolerance=MAGNET_TOLERANCE, end_stop_thickness=0, wire_diameter=STABILIZER_WIRE_DIAMETER, wire_tolerance=STABILIZER_WIRE_TOLERANCE);
 translate([-9,0,0])
-mirror([1,0,0]) stabilizer_body_cherry_cross(SHEATH_LENGTH, STABILIZER_STEM_DIAMETER, TRAVEL, PLATE_THICKNESS, stem_tolerance=STEM_TOLERANCE, sheath_tolerance=0.2, wall_thickness=WALL_THICKNESS, lip_height=SHEATH_LIP_HEIGHT, lip_overhang=LIP_OVERHANG, cross_height=STEM_TOP_HEIGHT, magnet_void=STAB_MAGNET_VOID, body_magnet_height=BODY_MAGNET_HEIGHT, body_magnet_diameter=BODY_MAGNET_DIAMETER, magnet_height=STAB_MAGNET_HEIGHT, magnet_diameter=STAB_MAGNET_DIAMETER, magnet_wall_thickness=MAGNET_WALL_THICKNESS, magnet_tolerance=MAGNET_TOLERANCE, end_stop_thickness=0, wire_diameter=STABILIZER_WIRE_DIAMETER, wire_tolerance=STABILIZER_WIRE_TOLERANCE);
+mirror([1,0,0]) stabilizer_body_cherry_cross(SHEATH_LENGTH, STABILIZER_STEM_DIAMETER, TRAVEL, PLATE_THICKNESS, stem_tolerance=STEM_TOLERANCE, sheath_tolerance=0.2, wall_thickness=WALL_THICKNESS, lip_height=SHEATH_LIP_HEIGHT, lip_overhang=LIP_OVERHANG, cross_height=STEM_TOP_HEIGHT, magnet_void=STAB_MAGNET_VOID, body_magnet_height=BODY_MAGNET_HEIGHT, body_magnet_diameter=BODY_MAGNET_DIAMETER, magnet_height=STAB_MAGNET_HEIGHT, magnet_diameter=STAB_MAGNET_DIAMETER, magnet_wall_thickness=MAGNET_WALL_THICKNESS, magnet_tolerance=MAGNET_TOLERANCE, end_stop_thickness=0, wire_diameter=STABILIZER_WIRE_DIAMETER, wire_tolerance=STABILIZER_WIRE_TOLERANCE, flip_text=true);
 // Stems for the under-the-plate stab:
 translate([6.75,0,0])
     stabilizer_slider_cherry_cross(TRAVEL, STABILIZER_STEM_DIAMETER, SHEATH_LENGTH, WALL_THICKNESS, PLATE_THICKNESS, cover_thickness=COVER_THICKNESS, wire_diameter=STABILIZER_WIRE_DIAMETER, wire_tolerance=STABILIZER_WIRE_TOLERANCE, magnet_height=STAB_MAGNET_HEIGHT, magnet_diameter=STAB_MAGNET_DIAMETER, magnet_tolerance=MAGNET_TOLERANCE, magnet_wall_thickness=MAGNET_WALL_THICKNESS, lip_height=SHEATH_LIP_HEIGHT, cross_height=STEM_TOP_HEIGHT, magnet_void=STAB_MAGNET_VOID, extra_tolerance=0);
@@ -88,9 +89,9 @@ translate([12,0,0])
     stabilizer_slider_cherry_cross(TRAVEL, STABILIZER_STEM_DIAMETER, SHEATH_LENGTH, WALL_THICKNESS, PLATE_THICKNESS, cover_thickness=COVER_THICKNESS, wire_diameter=STABILIZER_WIRE_DIAMETER, wire_tolerance=STABILIZER_WIRE_TOLERANCE, magnet_height=STAB_MAGNET_HEIGHT, magnet_diameter=STAB_MAGNET_DIAMETER, magnet_tolerance=MAGNET_TOLERANCE, magnet_wall_thickness=MAGNET_WALL_THICKNESS, lip_height=SHEATH_LIP_HEIGHT, cross_height=STEM_TOP_HEIGHT, magnet_void=STAB_MAGNET_VOID, extra_tolerance=0);
 
 translate([-1,SHEATH_OVERALL_LENGTH,0])
-    wire_retention_arm(TRAVEL, SHEATH_OVERALL_LENGTH, STABILIZER_WIRE_DIAMETER, STABILIZER_WIRE_TOLERANCE, WALL_THICKNESS, wire_distance=STABILIZER_WIRE_DISTANCE);
+    wire_retention_arm(TRAVEL, SHEATH_OVERALL_LENGTH, STABILIZER_WIRE_DIAMETER, STABILIZER_WIRE_CLIP_TOLERANCE, WALL_THICKNESS, wire_distance=STABILIZER_WIRE_DISTANCE);
 translate([-8,SHEATH_OVERALL_LENGTH,0]) mirror([1,0,0])
-    wire_retention_arm(TRAVEL, SHEATH_OVERALL_LENGTH, STABILIZER_WIRE_DIAMETER, STABILIZER_WIRE_TOLERANCE, WALL_THICKNESS, wire_distance=STABILIZER_WIRE_DISTANCE);
+    wire_retention_arm(TRAVEL, SHEATH_OVERALL_LENGTH, STABILIZER_WIRE_DIAMETER, STABILIZER_WIRE_CLIP_TOLERANCE, WALL_THICKNESS, wire_distance=STABILIZER_WIRE_DISTANCE);
 
 backforce_length = 30; // 15mm from the center of the switch on either side
 backforce_width = 11; // Needs to fit inside the keycap but not terribly tight--just enough to prevent it from rotating
@@ -127,25 +128,20 @@ module wire_retention_arm(travel, length, wire_diameter, wire_tolerance, wall_th
     difference() {
         translate([x/2-pin_diameter*1.5,0,thickness/2])
             cube([x, y, thickness], center=true);
-        // Cut out a place for the wire to snap into
-        translate([x/2-wire_diameter/2+wire_distance,y/3,0])
+        // Cut out a place for the wire to fit into
+        translate([x/2-wire_diameter/2+wire_distance,y/2.5,0])
             cylinder(d=wire_diameter+wire_tolerance, h=thickness*10, center=true);
-        // Cut a channel for the wire to slide through
-//        translate([pin_diameter/2+wire_diameter*2.25,0,0])
-//            cube([wire_diameter*1.5, wire_diameter/2, thickness*10], center=true);
     }
     // Add the little pegs that stick out
-    translate([0,0,0]) {
-        translate([0,0,pin_height/2+thickness])
-            cylinder(d=pin_diameter, h=pin_height, center=true, $fn=8);
-        translate([-pin_diameter,0,pin_height/2+thickness])
-            cylinder(d=pin_diameter, h=pin_height, center=true, $fn=8);
-    }
+    translate([0,0,pin_height/2+thickness])
+        cylinder(d=pin_diameter, h=pin_height, center=true, $fn=8);
+    translate([-pin_diameter,0,pin_height/2+thickness])
+        cylinder(d=pin_diameter, h=pin_height, center=true, $fn=8);
 }
 
 // This fits into the switch body--what the stem slides in and out of
 module stabilizer_body_cherry_cross(length, stem_diameter, travel, plate_thickness,
-    stem_tolerance=0.2, sheath_tolerance=0.2, wall_thickness=1.35, spring_wall_thickness=0.8, lip_height=1, lip_overhang=1, cross_height=3.5, magnet_void=0.2, body_magnet_height=2, body_magnet_diameter=6, magnet_height=2, magnet_diameter=4, magnet_wall_thickness=0.5, magnet_tolerance=0, end_stop_thickness=0.8, wire_diameter=1.12, wire_tolerance=0.4) {
+    stem_tolerance=0.2, sheath_tolerance=0.2, wall_thickness=1.35, spring_wall_thickness=0.8, lip_height=1, lip_overhang=1, cross_height=3.5, magnet_void=0.2, body_magnet_height=2, body_magnet_diameter=6, magnet_height=2, magnet_diameter=4, magnet_wall_thickness=0.5, magnet_tolerance=0, end_stop_thickness=0.8, wire_diameter=1.12, wire_tolerance=0.4, flip_text=false) {
     sheath_width = STABILIZER_WIDTH; // Side-to-side wall_thickness doesn't need to be as strong
     sheath_height = STABILIZER_LENGTH; // Need wall_thickness to be full height above/below
     total_travel = travel;
@@ -263,9 +259,16 @@ module stabilizer_body_cherry_cross(length, stem_diameter, travel, plate_thickne
         }
         // Mark the total travel on the side
         travel_text = len(str(travel)) > 1 ? str(travel) : str(travel, ".0"); // So it looks right
-        translate([sheath_width/2-0.2,-1.5,sheath_height/1.25])
-            rotate([90,90,90]) linear_extrude(1)
-                text(travel_text, size=3, font="Ubuntu:style=Bold");
+        if (flip_text) {
+            translate([sheath_width/2-0.2,3,1.25])
+                rotate([90,0,90]) linear_extrude(1)
+                    mirror([1,0,0])
+                        text(travel_text, size=2.5, font="Ubuntu:style=Bold");
+        } else {
+            translate([sheath_width/2-0.2,-2,1.25])
+                rotate([90,0,90]) linear_extrude(1)
+                    text(travel_text, size=2.5, font="Ubuntu:style=Bold");
+        }
     }
     // Snap clips
     translate([ // Top left
@@ -339,9 +342,8 @@ module stabilizer_body_cherry_cross(length, stem_diameter, travel, plate_thickne
 // Generates a cross (+) style Cherry MX stem/slider (lowered by CHERRY_CROSS_LENGTH/3 to print flat):
 module stabilizer_slider_cherry_cross(travel, diameter, sheath_length, wall_thickness, plate_thickness, cover_thickness=0.8, wire_diameter=1.12, wire_tolerance=0.4, magnet_height=2, magnet_diameter=4, magnet_tolerance=0, magnet_wall_thickness=0.5, lip_height=1, cross_height=3.5, magnet_void=0.2, extra_tolerance=0) {
     total_travel = travel+sheath_length+plate_thickness+cover_thickness+lip_height+magnet_void+magnet_height;
-//    echo(total_travel=total_travel);
-    // NOTE: Assuming you have something like an sk6812mini (3.7mm wide) in the center, a 3mm (diameter) magnet will need to be at least 1.85mm (3.7/2) away from the center for there to be room for a hall effect sensor (though you probably want at least a mm or two more than that).
-    stem_length = total_travel+wire_diameter+wire_tolerance*2;
+    wire_diameter_adjust = 1.35; // Controls how much extra room it gets in the stem (so that the wire has room when tilted at an angle)
+    stem_length = total_travel+wire_diameter*wire_diameter_adjust+wire_tolerance*2;
 //    stem_length = total_travel/1.25;
 //    echo(stem_length=stem_length);
     wire_diameter = wire_diameter + wire_tolerance;
@@ -405,11 +407,11 @@ module stabilizer_slider_cherry_cross(travel, diameter, sheath_length, wall_thic
                             hull() {
                                 translate([wire_diameter/4,0,0])
                                     cylinder(
-                                        d=wire_diameter*1.35,
+                                        d=wire_diameter*wire_diameter_adjust,
                                         h=total_travel*2, center=true);
                                 translate([-wire_diameter/4,0,0])
                                     cylinder(
-                                        d=wire_diameter*1.35,
+                                        d=wire_diameter*wire_diameter_adjust,
                                         h=total_travel*2, center=true);
                             }
                 }

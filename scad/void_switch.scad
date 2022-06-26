@@ -1,7 +1,7 @@
 // 3D printable magnetic separation key switch suitable for use via reed switches or hall effect sensors
 
 // AUTHOR: Riskable <riskable@youknowwhat.com>
-// VERSION: 1.0 (Changelog is at the bottom)
+// VERSION: 1.3 (Changelog is at the bottom)
 // LICENSE: TBD. Do not sell Void Switches (yet!) but feel free to make your own for personal use.
 // LICENSING NOTE: If you want to sell keyboards/switches using this design just let me know and we'll work something out! I'll help you make awesome stuff!
 
@@ -94,7 +94,7 @@ BODY_CORNER_RADIUS = 0.5;
 // How thick the walls (just the sides) of the switch will be (in general)
 WALL_THICKNESS = 1.35;
 // How much the lip sticks out above the top of the switch body.
-SHEATH_LIP_HEIGHT = 1; // [0.5:0.1:1.5]
+SHEATH_LIP_HEIGHT = 0.8; // [0.5:0.1:1.5]
 // NOTE: If you make SHEATH_LIP_HEIGHT shorter you may want to increase SHEATH_LIP_OVERHANG a bit to prevent it from squishing its way through the top of the body (which can happen if you're pressing really hard trying to snap it into the top plate).
 
 // LESS IMPORTANT VARIABLES (maybe leave these alone)
@@ -159,6 +159,9 @@ RENDER = ["body", "sheath", "stem"];
 // You can combine the body and sheath into a single unit if you have a resin printer since the resolution is tight enough that you don't need to worry about the orientation of the layer lines:
 //RENDER = ["body+sheath", "stem"];
 // NOTE: SET SHEATH_LIP_HEIGHT TO 0 IF YOU USE "body+sheath"!
+
+// If you want to turn some other model into something that a Void Switch stem can slide in/out of you can use the stem_void option:
+//RENDER = ["stem_void"];
 
 // If you want to visualize the switch as it would be installed just uncomment the one you want:
 //RENDER = ["%body", "visualize_keyup", "switch_plate"]; // NOTE: Great for checking tolerances!
@@ -396,6 +399,23 @@ for (item=RENDER) {
                     flat_cross=STABILIZER_STEM,
                     cross_x_extra=STEM_CROSS_X_EXTRA,
                     cross_y_extra=STEM_CROSS_Y_EXTRA);
+    } else if (item=="stem_void") {
+        // Generating a stem negative (for use in other models for boolean/cutout stuff)
+            stem_cherry_cross(TOTAL_TRAVEL, STEM_DIAMETER, SHEATH_LENGTH, WALL_THICKNESS, COVER_THICKNESS,
+                magnet_wall_thickness=MAGNET_WALL_THICKNESS,
+                magnet_height=STEM_MAGNET_HEIGHT,
+                magnet_diameter=STEM_MAGNET_DIAMETER,
+                magnet_tolerance=MAGNET_TOLERANCE,
+                magnet_diameter_tolerance=STEM_MAGNET_DIAMETER_TOLERANCE,
+                lip_height=SHEATH_LIP_HEIGHT,
+                body_magnet_height=BODY_MAGNET_HEIGHT,
+                cross_height=STEM_TOP_HEIGHT,
+                magnet_void=MAGNET_VOID,
+                extra_tolerance=STEM_TOLERANCE,
+                top_magnet_cover_thickness=BODY_MAGNET_COVER_THICKNESS,
+                flat_cross=STABILIZER_STEM,
+                cross_x_extra=STEM_CROSS_X_EXTRA,
+                cross_y_extra=STEM_CROSS_Y_EXTRA);
     } else if (item=="visualize_keyup") {
         rotate([0,0,-90]) translate([
             -sheath_height/2+SHEATH_WALL_THICKNESS*1.5-STEM_TOLERANCE,
@@ -529,4 +549,16 @@ for (item=RENDER) {
         * stabilizer.scad: You can now specify the height of the cross (+) just like you can in void_switch.scad.
         * stabilizer.scad: You can now optionally add another (2x1mm) magnet to the stabilizer stem to further reduce the chance of unwanted noise in your stabilizer.  Right now this is hard-coded but I'll make it parametric in the future.
         * stabilizer.scad: Removed old/unused cruft.
+    1.2:
+        * void_switch.scad: SHEATH_LIP_HEIGHT is now 0.8 instead of 1 by default (just to shorten things a smidge--1 is kinda overkill).
+        * stabilizer.scad: The text indicating the total travel now shows up correctly on the mirrored stabilizer body (the left side).
+        * stabilizer.scad: The wire_retention_arm() has had the little wire cutout moved down slightly so that it (the wire) gets a bit less wiggle room (it really was too much before this change).
+        * stabilizer.scad: Added STABILIZER_WIRE_CLIP_TOLERANCE so that you can have a different amount of tolerance in the clip than in the stabilizer's stem (the clip needs slightly more than the stem does).
+        * stabilizer.scad: Fixed an issue where stabilizer stems were getting generated slightly too short when total travel was less than 4.
+    1.3:
+        * SHEATH_LIP_HEIGHT has been changed from a default of 1.0 to 0.8 (it doesn't need to be that thick).
+        * Added "stem_void" feature which uses the stem.scad's negative space feature (same as used by the sheath.scad) to create a model that can be used in boolean operations to make a hole (in other models) that the stem can slide in/out of.
+        * Changed how the negative space feature of the stem gets generated slightly so that it doesn't cut out more than it needs to (so the new "stem_void" feature makes more sense).
+        * The negative space cutout of the stem now includes a center mark for easy alignment and there's also a commented-out bit of code that adds an alignment marker if you're doing something interesting and want to make sure everything lines up like it's supposed to.
+        * stabilizer.scad: Changed the design of the wire clip so that it takes up much less space and can now work with low-profile Void Switches.
 */
