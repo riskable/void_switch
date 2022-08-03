@@ -130,6 +130,8 @@ SHEATH_TOLERANCE = 0.15;
 // Wiggle room for the magnet where it gets inserted into the sheath (default: 0.1 for strong hold). NOTE: If you have problems with the sheath breaking when you insert the magnet just make this big (e.g. 0.25) and just use some glue.
 SHEATH_MAGNET_DIAMETER_TOLERANCE = 0.1;
 // TIP FOR RESIN PRINTERS: Resin tends to be brittle so to prevent cracking when inserting the magnet you may want to set SHEATH_MAGNET_DIAMETER_TOLERANCE to something like 0.1 and squirt some resin on the magnet after insertion to hold it in place.
+// The wall thickness for the magnet in the sheath
+SHEATH_MAGNET_WALL_THICKNESS = MAGNET_WALL_THICKNESS;
 // How much the sheath lip sticks out on top of the switch body
 SHEATH_LIP_OVERHANG = 1;
 // Controls the "spread" of the notches >< on the (inside) sides of the sheath (they're rotated this many degrees so they get farther apart as the stem progresses down the length of the sheath; this is to ensure the least amount of friction when returning to keyup).  IF YOU INCREASE TRAVEL SIGNIFICANTLY YOU MAY WANT TO ADJUST THIS but otherwise probably leave it alone.
@@ -332,6 +334,7 @@ for (item=RENDER) {
                     magnet_diameter=STEM_MAGNET_DIAMETER,
                     magnet_tolerance=MAGNET_TOLERANCE,
                     magnet_diameter_tolerance=SHEATH_MAGNET_DIAMETER_TOLERANCE,
+                    magnet_wall_thickness=SHEATH_MAGNET_WALL_THICKNESS,
                     end_stop_thickness=SHEATH_END_STOP_THICKNESS,
                     magnet_void=MAGNET_VOID,
                     snap_pip_height=SHEATH_CLIP_HEIGHT,
