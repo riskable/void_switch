@@ -564,4 +564,6 @@ for (item=RENDER) {
         * Changed how the negative space feature of the stem gets generated slightly so that it doesn't cut out more than it needs to (so the new "stem_void" feature makes more sense).
         * The negative space cutout of the stem now includes a center mark for easy alignment and there's also a commented-out bit of code that adds an alignment marker if you're doing something interesting and want to make sure everything lines up like it's supposed to.
         * stabilizer.scad: Changed the design of the wire clip so that it takes up much less space and can now work with low-profile Void Switches.
+    1.3.1:
+        * Added SHEATH_MAGNET_WALL_THICKNESS to default to MAGNET_WALL_THICKNESS and be passed into the function for rendering the sheath.
 */
