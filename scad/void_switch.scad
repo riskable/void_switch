@@ -1,7 +1,7 @@
 // 3D printable magnetic separation key switch suitable for use via reed switches or hall effect sensors
 
 // AUTHOR: Riskable <riskable@youknowwhat.com>
-// VERSION: 1.3 (Changelog is at the bottom)
+// VERSION: 1.4 (Changelog is at the bottom)
 // LICENSE: TBD. Do not sell Void Switches (yet!) but feel free to make your own for personal use.
 // LICENSING NOTE: If you want to sell keyboards/switches using this design just let me know and we'll work something out! I'll help you make awesome stuff!
 
@@ -17,7 +17,7 @@ use <utils.scad>
 // Uncomment this to see the precise location of the hall effect sensor in relation to the center of the switch:
 //translate([-3.25,-3.25,0]) // Center of sensor is 3.25mm (45° angle) from center of switch
 //    color("green") cylinder(d=1, h=100, center=true);
-// NOTE: The magnet isn't perfectly aligned with the sensor on purpose: It's to cram everything into a slightly tigher space :)
+// NOTE: The magnet isn't perfectly aligned with the sensor on purpose: It's to cram everything into a slightly tigher space (it's plenty close enough :)
 
 // TODO: Make the body stem-specific like the sheath so that we can get accurate center positions for the sheath.
 
@@ -41,10 +41,11 @@ use <utils.scad>
 // IMPORTANT VARIABLES (customize to your liking):
 
 // The amount of space interposed between the magnets. Controls how strong the switch will be; The higher the value the less force will be required to press the switch. Look at the console output to see the calculated switch strength (e.g. "NOTE: ESTIMATED STRENGTH/FORCE: ~56g"). Highly dependent on the strength and thickness of your magnets.
-MAGNET_VOID = 0.6; // [0.1:0.1:3]
+MAGNET_VOID = 0.9; // [0.1:0.1:3]
 /* MAGNET_VOID NOTES:
     * The higher the MAGNET_VOID the lower the (initial) force to move (press) the switch.
     * You're just going to have to experiment with a few different values here to see what you like.
+    * The total travel of the switch has an impact on how much extra force the levitator will add.  Beyond ~3.5mmm of travel it doesn't add much (2-5g) but anything shorter than that can result in a non-trivial amount of force being added (say, 7-10g for 2mm of travel).  Having said that, anything below ~3.5mm of travel doesn't usually need the levitator anyway so there's that.
 */
 // 2-4mm of travel is traditional for mechanical key switches
 TOTAL_TRAVEL = 4; // [1:0.1:20]
@@ -61,7 +62,7 @@ BODY_MAGNET_DIAMETER = 4; // [3:1:5]
 BODY_MAGNET_HEIGHT = 1.7; // [1:0.1:3]
 // NOTE: CHINESE SELLERS LIE! ~1.7mm is the norm for "4x2mm" N35 magnets... Bastards
 
-// Only used when calculating the strength of your switch (it gets spit out to the OpenSCAD console... "NOTE: ESTIMATED STRENGTH/FORCE: ~56g")
+// Only used when calculating the strength of your switch (it gets spit out to the OpenSCAD console... "NOTE: ESTIMATED STRENGTH/FORCE: ~56g"). NOTE: Does not include the force added by the levitator!
 MAGNET_STRENGTH = "N35"; // [N35, N42, N45, N52]
 // NOTE: The magnet strength calculation assumes you're using two magnets of the same size (and uses the "BODY" magnet values).
 
@@ -149,6 +150,8 @@ SHEATH_CLIP_LENGTH = 0.85;
 SHEATH_CLIP_WIDTH = 2;
 // Controls the width of the notch for the sheath in the body and its matching cutout/channel on the underside of the sheath
 SHEATH_BOTTOM_CLIP_WIDTH = 1.5;
+// Controls if the tolerance will be carved out of the side of the sheath (can make switch ever so slightly smoother)
+SHEATH_TOLERANCE_TEXT = true;
 
 // OpenSCAD's rendering resolution (64 worked well for me but feel free to go higher if you're patient--unlike me)
 $fn = 64;
@@ -160,7 +163,7 @@ RENDER = ["body", "sheath", "stem"];
 //RENDER = ["sheath_double_sided", ""];
 // You can combine the body and sheath into a single unit if you have a resin printer since the resolution is tight enough that you don't need to worry about the orientation of the layer lines:
 //RENDER = ["body+sheath", "stem"];
-// NOTE: SET SHEATH_LIP_HEIGHT TO 0 IF YOU USE "body+sheath"!
+// NOTE: SET SHEATH_LIP_HEIGHT and SHEATH_LENGTH TO 0 IF YOU USE "body+sheath"!
 
 // If you want to turn some other model into something that a Void Switch stem can slide in/out of you can use the stem_void option:
 //RENDER = ["stem_void"];
@@ -284,11 +287,13 @@ for (item=RENDER) {
                     magnet_diameter=STEM_MAGNET_DIAMETER,
                     magnet_tolerance=MAGNET_TOLERANCE,
                     magnet_diameter_tolerance=SHEATH_MAGNET_DIAMETER_TOLERANCE,
+                    magnet_wall_thickness=SHEATH_MAGNET_WALL_THICKNESS,
                     end_stop_thickness=SHEATH_END_STOP_THICKNESS,
                     magnet_void=MAGNET_VOID,
                     notch_angle=SHEATH_NOTCH_ANGLE,
                     snug_magnet=true,
-                    inside_body=true);
+                    inside_body=true,
+                    mark_tolerance=SHEATH_TOLERANCE_TEXT);
     } else if (item=="%body") {
         %switch_body( // Sometimes it's nice to have the body transparent when visualizing things
             BODY_LENGTH, BODY_WIDTH, TOTAL_TRAVEL,
@@ -342,7 +347,8 @@ for (item=RENDER) {
                     snap_pip_width=SHEATH_CLIP_WIDTH,
                     notch_angle=SHEATH_NOTCH_ANGLE,
                     bottom_clip_width=SHEATH_BOTTOM_CLIP_WIDTH,
-                    snug_magnet=SHEATH_HOLDS_MAGNET);
+                    snug_magnet=SHEATH_HOLDS_MAGNET,
+                    mark_tolerance=SHEATH_TOLERANCE_TEXT);
     } else if (item=="sheath_double_sided") {
         translate([BODY_LENGTH/1.05,0,(SHEATH_LENGTH+TOTAL_TRAVEL-BODY_MAGNET_COVER_THICKNESS+
              STEM_MAGNET_HEIGHT+MAGNET_WALL_THICKNESS*2+MAGNET_TOLERANCE+MAGNET_VOID+COVER_THICKNESS)/2+BODY_MAGNET_HEIGHT/2])
@@ -360,6 +366,7 @@ for (item=RENDER) {
                     magnet_diameter=STEM_MAGNET_DIAMETER,
                     magnet_tolerance=MAGNET_TOLERANCE,
                     magnet_diameter_tolerance=SHEATH_MAGNET_DIAMETER_TOLERANCE,
+                    magnet_wall_thickness=SHEATH_MAGNET_WALL_THICKNESS,
                     end_stop_thickness=SHEATH_END_STOP_THICKNESS,
                     magnet_void=MAGNET_VOID,
                     snap_pip_height=SHEATH_CLIP_HEIGHT,
@@ -367,7 +374,8 @@ for (item=RENDER) {
                     snap_pip_width=SHEATH_CLIP_WIDTH,
                     notch_angle=SHEATH_NOTCH_ANGLE,
                     bottom_clip_width=SHEATH_BOTTOM_CLIP_WIDTH,
-                    snug_magnet=SHEATH_HOLDS_MAGNET);
+                    snug_magnet=SHEATH_HOLDS_MAGNET,
+                    mark_tolerance=SHEATH_TOLERANCE_TEXT);
     } else if (item=="stem") {
         translate([-BODY_LENGTH/1.25,-TOTAL_TRAVEL/1.15,0]) // STEM
             rotate([0,0,0]) // Line it up so we can bring it closer
@@ -440,6 +448,7 @@ for (item=RENDER) {
                     magnet_diameter=STEM_MAGNET_DIAMETER,
                     magnet_tolerance=MAGNET_TOLERANCE,
                     magnet_diameter_tolerance=SHEATH_MAGNET_DIAMETER_TOLERANCE,
+                    magnet_wall_thickness=SHEATH_MAGNET_WALL_THICKNESS,
                     end_stop_thickness=SHEATH_END_STOP_THICKNESS,
                     magnet_void=MAGNET_VOID,
                     snap_pip_height=SHEATH_CLIP_HEIGHT,
@@ -447,7 +456,8 @@ for (item=RENDER) {
                     snap_pip_width=SHEATH_CLIP_WIDTH,
                     notch_angle=SHEATH_NOTCH_ANGLE,
                     bottom_clip_width=SHEATH_BOTTOM_CLIP_WIDTH,
-                    snug_magnet=SHEATH_HOLDS_MAGNET);
+                    snug_magnet=SHEATH_HOLDS_MAGNET,
+                    mark_tolerance=SHEATH_TOLERANCE_TEXT);
         rotate([0,0,-90]) translate([
             -0.95,0.95,
             -SHEATH_LIP_HEIGHT-TOTAL_TRAVEL-MAGNET_WALL_THICKNESS+MAGNET_TOLERANCE/2
@@ -488,6 +498,7 @@ for (item=RENDER) {
                     magnet_diameter=STEM_MAGNET_DIAMETER,
                     magnet_tolerance=MAGNET_TOLERANCE,
                     magnet_diameter_tolerance=SHEATH_MAGNET_DIAMETER_TOLERANCE,
+                    magnet_wall_thickness=SHEATH_MAGNET_WALL_THICKNESS,
                     end_stop_thickness=SHEATH_END_STOP_THICKNESS,
                     magnet_void=MAGNET_VOID,
                     snap_pip_height=SHEATH_CLIP_HEIGHT,
@@ -495,7 +506,8 @@ for (item=RENDER) {
                     snap_pip_width=SHEATH_CLIP_WIDTH,
                     notch_angle=SHEATH_NOTCH_ANGLE,
                     bottom_clip_width=SHEATH_BOTTOM_CLIP_WIDTH,
-                    snug_magnet=SHEATH_HOLDS_MAGNET);
+                    snug_magnet=SHEATH_HOLDS_MAGNET,
+                    mark_tolerance=SHEATH_TOLERANCE_TEXT);
         rotate([0,0,-90]) translate([
             -0.95,0.95,
             -SHEATH_LIP_HEIGHT])
@@ -566,4 +578,13 @@ for (item=RENDER) {
         * stabilizer.scad: Changed the design of the wire clip so that it takes up much less space and can now work with low-profile Void Switches.
     1.3.1:
         * Added SHEATH_MAGNET_WALL_THICKNESS to default to MAGNET_WALL_THICKNESS and be passed into the function for rendering the sheath.
+    1.4:
+        * Added SHEATH_TOLERANCE_TEXT which controls whether or not the sheath will have its tolerance marked on the outside of the part.  Disabling this can result in a *slightly* smoother switch (with FDM printers) since the perimeter overlap can result in the text perimeters "bleeding through" ever so slightly to the interior of the sheath where the stem rubs against it.  If you print fast or have a wobbly hot end this effect is more pronounced so it can be useful to turn off that text to get the smoothest switch possible.
+        * Changed the default MAGNET_VOID from 0.6 to 0.9 because not everyone has mallet fingers like me =)
+        * Added pregenerated 0.9mm MAGNET_VOID switch STL and 3MF files to the repo.
+        * Added some additional info here and there in the form of comments.
+        * stabilizer.scad: The default STAB_MAGNET_VOID was changed from 0.0 to -0.1 (makes the force added by the sabilizers a little less).
+        * stabilizer.scad: The default STAB_MAGNET_HEIGHT was changed from 1.8 to 2 since the stabilizers aren't that picky (even if you have 1.7mm thick magnets they'll still work just fine in a stab made for 2mm).
+        * Added pregenerated stabilizer STL and 3MF files along with pregenerated files for extra clips (because they're easy to lose/break).
+        * Fixed a few places where the new SHEATH_MAGNET_WALL_THICKNESS variable was missing.
 */

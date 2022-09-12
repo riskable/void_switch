@@ -58,12 +58,12 @@ MAGNET_TOLERANCE = 0.2; // [0.05:0.05:0.3]
 // Diameter of the stabilizer magnets (NOTE: Doesn't have to be the same as the switch!)
 STAB_MAGNET_DIAMETER = 4; // [3:1:5]
 // Thickness/height of the stabilizer magnets
-STAB_MAGNET_HEIGHT = 1.8; // [1:0.1:3]
+STAB_MAGNET_HEIGHT = 2; // [1:0.1:3]
 // Does the same thing as SHEATH_LIP_OVERHANG in void_switch.scad (how much the lip sticks out on the sides of the stab).
 LIP_OVERHANG = 0.65;
 
 // Distance between the magnet and the stabilizer bar/wire (lower value == less pull on the wire). Similar to the MAGNET_VOID in void_switch.scad but not as strong of an impact.  Uses negative values.
-STAB_MAGNET_VOID = 0.0; // [-0.3:0.1:0]
+STAB_MAGNET_VOID = -0.1; // [-0.3:0.1:0]
 
 /* [Hidden] */
 $fn = 64;
