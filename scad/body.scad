@@ -14,9 +14,8 @@ module switch_body(length, width, travel, taper=1.1, wall_thickness=1.4, sheath_
         cover_thickness+sheath_length+total_travel-top_magnet_cover_thickness
         +magnet_height+magnet_wall_thickness*2+magnet_tolerance
         +magnet_void+sheath_end_stop_thickness); // NOTE: Does not include the lip_height on purpose
-    // adjusted_magnet_wall_thickness = sheath_inside_body ? 0 : magnet_wall_thickness;
     body_height = height ? height : sheath_depth; // For clarity in the code
-//    echo(body_height=body_height);
+    note(str("BODY_HEIGHT: ", body_height));
     // NOTE: These two sheath variables need to match how they're handled in the actual sheath:
     sheath_width = stem_diameter+sheath_wall_thickness*2;
     sheath_height = stem_diameter+sheath_wall_thickness*2;
@@ -54,10 +53,9 @@ module switch_body(length, width, travel, taper=1.1, wall_thickness=1.4, sheath_
                             r=corner_radius, center=true);
                 }
                 // Cut out the corner so we don't have to worry about a large stem/magnet scraping the sides
-//                adjusted_magnet_wall_thickness = sheath_inside_body ? 0 : magnet_wall_thickness;
                 translate([
-                  -length/2.85,
-                  -width/2.85,
+                  -length/3.75,
+                  -width/3.75,
                   body_height/2+top_magnet_height+magnet_wall_thickness+droop_extra-top_magnet_cover_thickness+sheath_length
                   ])
                     cube([length/2,width/2,body_height], center=true);
@@ -81,30 +79,8 @@ module switch_body(length, width, travel, taper=1.1, wall_thickness=1.4, sheath_
                                 h=cover_thickness,
                                 r=corner_radius/1.5, center=true);
                     }
-                    // This gives the magnet a bit of a "seat" so it doesn't fall through:
-                    translate([
-                      -length/2-top_magnet_diameter/2.2,
-                      -width/2-top_magnet_diameter/2.2,
-                      -magnet_wall_thickness/2+top_magnet_height+magnet_wall_thickness+droop_extra-top_magnet_cover_thickness+sheath_length
-                    ])
-                        rotate([0,0,45])
-                            cube([
-                                length,
-                                width,
-                                magnet_wall_thickness,
-                            ], center=true);
                 }
                 // Add a little hole that ensures the bridging goes right
-                translate([
-                  -length/2+top_magnet_diameter/1.65,
-                  -width/2+top_magnet_diameter/1.65,
-                  -(magnet_wall_thickness+droop_extra)/2+top_magnet_height+magnet_wall_thickness+droop_extra-top_magnet_cover_thickness+sheath_length])
-                    difference() {
-                        cube([2,2,magnet_wall_thickness+droop_extra+0.01], center=true);
-                        translate([0.65,0.65,0])
-                            rotate([0,0,45])
-                                cube([2,3,magnet_wall_thickness*10], center=true);
-                    }
                 // TODO: Make these hard-coded numbers like -4.7 take the size of the body into account...
                 // Cut out the sides near where the stem presses against the magnet so it doesn't get caught on the sides
                 translate([
@@ -189,64 +165,53 @@ module switch_body(length, width, travel, taper=1.1, wall_thickness=1.4, sheath_
         center_adjust = (sheath_height/2-sheath_wall_thickness*1.5)*1.45+stem_tolerance*1.5;
         // NOTE: center_adjust matches how high off the floor the Cherry cross (+) is in stem.scad.  This allows us to accurately position the sheath so that the stem sits dead center.
         rotate([0,0,45])
-            translate([-(sheath_height+sheath_tolerance*2)/2+center_adjust,0,0])
+            translate([-(sheath_height+sheath_tolerance*2)/2+center_adjust,0,body_height/2])
                 difference() {
                     cube([
                         sheath_height+sheath_tolerance*2,
                         sheath_width+sheath_tolerance*2,
-                        body_height], center=true);
+                        body_height*2], center=true);
                     translate([sheath_height/2,0,0])
                         cube([
                             cover_thickness,
                             sheath_clip_width-sheath_tolerance*2,
                             body_height*2], center=true);
                 }
-// TODO: Make the top-pull-via-tool thing work somehow (don't have much room to work with)
-//        if (top_clip_hole_width > 0) { 
-//            // Flush mount; make different holes in the top we can use to pull the switch if necessary
-//            #translate([
-//              -length/2+wall_thickness+top_clip_hole_width/2.5,
-//              width/2-wall_thickness-top_clip_hole_width/2.5,
-//              0])
-//                rotate([0,0,45])
-//                    cube([top_clip_hole_width,top_clip_hole_length,body_height/2], center=true);
-//            translate([0,-width/2+wall_thickness/1.2,0])
-//                cube([length/4,length,body_height/2], center=true);
-//        }
         // Add the cutout for the sheath + magnet (horizontal)
         if (!sheath_snug_magnet) {
             // Makes room for *just* the magnet (no material wrapping the magnet in the sheath)
             // NOTE: This will need adjustment for a 5 or 6mm magnet (made for 4mm)
             translate([
-//              -stem_diameter/4-top_magnet_diameter/1.75,
-//              -stem_diameter/4-top_magnet_diameter/1.75,
               -stem_diameter/2-(top_magnet_diameter-magnet_wall_thickness*3)/2.9,
               -stem_diameter/2-(top_magnet_diameter-magnet_wall_thickness*3)/2.9,
               -top_magnet_cover_thickness+droop_extra/2]) {
                   cylinder(
                       d=top_magnet_diameter+magnet_tolerance, // For just manget
-                      h=top_magnet_height*2+magnet_tolerance+droop_extra,
                       center=true);
               }
         } else {
-            fn = sheath_inside_body ? 64 : 8;
+            fn = sheath_inside_body ? 64 : 16;
             // Makes room for the sheath when it wraps around the outside of the magnet
             translate([
-//              -stem_diameter/4-top_magnet_diameter/1.75,
-//              -stem_diameter/4-top_magnet_diameter/1.75,
-              -stem_diameter/2-(top_magnet_diameter-magnet_wall_thickness*3)/2.9+stem_tolerance,
-              -stem_diameter/2-(top_magnet_diameter-magnet_wall_thickness*3)/2.9+stem_tolerance,
+              -stem_diameter/2-(top_magnet_diameter-magnet_wall_thickness*3)/2.6+stem_tolerance,
+              -stem_diameter/2-(top_magnet_diameter-magnet_wall_thickness*3)/2.6+stem_tolerance,
               -top_magnet_cover_thickness+droop_extra/2+sheath_length/2]) {
-                rotate([0,0,22.5]) cylinder(
-                  d=top_magnet_diameter+magnet_wall_thickness*3+sheath_tolerance*2, // For magnet + sheath holding it
-                  h=top_magnet_height*2+magnet_tolerance+droop_extra+sheath_length,
-                  center=true, $fn=fn);
+                difference() {
+                    rotate([0,0,22.5]) cylinder(
+                      d=top_magnet_diameter+magnet_wall_thickness*3+sheath_tolerance*2, // For magnet + sheath holding it
+                      h=top_magnet_height*2+magnet_tolerance+droop_extra+sheath_length,
+                      center=true, $fn=fn);
+                    translate([-top_magnet_diameter/1.3,-top_magnet_diameter/1.3,0]) rotate([0,0,45])
+                        cube([top_magnet_diameter,top_magnet_diameter,top_magnet_diameter*2], center=true);
+                }
+            // Make space for the little "bar" that holds the magnet into the sheath:
+            rotate([0,0,-45])
+                translate([0,-(magnet_wall_thickness+magnet_tolerance*2)/2,top_magnet_height+magnet_wall_thickness/2])
+                    cube([top_magnet_diameter+magnet_wall_thickness*3,magnet_wall_thickness+magnet_tolerance*2,magnet_wall_thickness+magnet_tolerance], center=true);
             }
         }
         // Visualize the magnet too
         translate([
-//          -stem_diameter/4-top_magnet_diameter/1.75,
-//          -stem_diameter/4-top_magnet_diameter/1.75,
           -stem_diameter/2-(top_magnet_diameter-magnet_wall_thickness*3)/2.9,
           -stem_diameter/2-(top_magnet_diameter-magnet_wall_thickness*3)/2.9,
           top_magnet_height/2-top_magnet_cover_thickness]) {
@@ -284,19 +249,6 @@ module switch_body(length, width, travel, taper=1.1, wall_thickness=1.4, sheath_
             cover_thickness+snap_clip_thickness/1.25+plate_thickness])
                 rotate([60,0,0])
                     cube([clip_width, snap_clip_thickness*2, snap_clip_thickness], center=true);
-        // Same snaps/clips but other sides (probably unnecessary but leaving this here "just in case" someone wants the switch body to have a death grip on the plate):
-//        translate([
-//            width/2+snap_clip_protrusion-cover_overhang/1.15,
-//            0,
-//            cover_thickness+snap_clip_thickness/2+plate_thickness/1.15])
-//                rotate([0,45,0])
-//                    cube([snap_clip_thickness, width/3, snap_clip_thickness], center=true);
-//        translate([
-//            -BODY_WIDTH/2-snap_clip_protrusion+cover_overhang/1.25,
-//            0,
-//            cover_thickness+snap_clip_thickness/2+plate_thickness/1.15])
-//                rotate([0,45,0])
-//                    cube([snap_clip_thickness, width/3, snap_clip_thickness], center=true);
     }
     // TEMP: Uncomment this to visualize the cover plate:
 //    %translate([0,0,plate_thickness/2+cover_thickness])

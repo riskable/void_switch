@@ -37,13 +37,15 @@ CHERRY_LED_PIN_2_Y_DISTANCE = 2.54;
 
 // Generates a cross (+) style Cherry MX stem:
 // NOTE: notch_angle only applies when using extra_tolerance (void space feature)
-module stem_cherry_cross(travel, diameter, sheath_length, wall_thickness, cover_thickness, magnet_height=2, magnet_diameter=4, magnet_tolerance=0, magnet_diameter_tolerance=-0.1, magnet_wall_thickness=0.5, lip_height=1, magnet_void=0.2, body_magnet_height=2, extra_tolerance=0, cross_height=CHERRY_CROSS_HEIGHT, top_magnet_cover_thickness=-0.5, notch_angle=1, flat_cross=false, cross_x_extra=0, cross_y_extra=0) {
+module stem_cherry_cross(travel, diameter, sheath_length, wall_thickness, cover_thickness, magnet_height=2, magnet_diameter=4, magnet_tolerance=0, magnet_diameter_tolerance=0.1, magnet_wall_thickness=0.5, lip_height=1, magnet_void=0.2, body_magnet_height=2, extra_tolerance=0, cross_height=CHERRY_CROSS_HEIGHT, top_magnet_cover_thickness=-0.5, notch_angle=1, flat_cross=false, cross_x_extra=0, cross_y_extra=0) {
     total_travel = travel+sheath_length+cover_thickness+lip_height;
-//    magnet_distance = 2.25; // Magnet's (edge) distance from the center of the switch (MUST BE UNCHANGING!)
+    // Magnet's (edge) distance from the center of the switch (MUST BE UNCHANGING!):
     magnet_distance = sqrt((SENSOR_OFFSET[0]*SENSOR_OFFSET[0])+(SENSOR_OFFSET[1]*SENSOR_OFFSET[1]));
+    // NOTE: I completely forget how I figured out that the square root of all that made for the perfect magnet_distance LOL 🤷
     stem_length = total_travel+magnet_height+magnet_wall_thickness*2+magnet_tolerance+magnet_void-top_magnet_cover_thickness+body_magnet_height;
     flat_back_tolerance = extra_tolerance/4; // The flat side opposes a 45° angle which means it'll get too much wiggle room if we just use the normal tolerance value.
-    adjusted_magnet_diameter = magnet_diameter - magnet_diameter_tolerance; // Negative tolerance by default so the magnet gets held tight (cram it in there!)
+    adjusted_magnet_diameter = magnet_diameter + magnet_diameter_tolerance; // Negative tolerance by default so the magnet gets held tight (cram it in there!)
+    sheath_width = diameter+wall_thickness*2;
     // TIP FOR RESIN PRINTERS: To avoid cracking set magnet_diameter_tolerance to 0 and squirt some resin in there before inserting the magnet.
     // NOTE: Because we add a bit extra to the end of the connector there's +1mm in a few places
     taper_length = 0.5; // Goes at the end of the stem to work around 3D printing "corner bulge" that can result in stems getting stuck down
@@ -101,17 +103,6 @@ module stem_cherry_cross(travel, diameter, sheath_length, wall_thickness, cover_
                                     h=total_travel*10,
                                     center=true);
                             }
-            // TODO: Make the magnet holder stuff part of this stuff above it
-            // Cutout for the magnet (NOTE: This needs to line up with the magnet holder cutout exactly!):
-                            translate([
-                                0,
-                                -(magnet_height+magnet_tolerance)/2-magnet_wall_thickness+stem_length/2,
-                                (magnet_height+magnet_tolerance)/2+magnet_wall_thickness
-                            ])
-                                    cube([
-                                        adjusted_magnet_diameter, // No tolerance here--meant to be tight (cram it in!)
-                                        magnet_diameter,
-                                        magnet_height+magnet_tolerance], center=true);
             // This hole makes sure we can push the magnet out if we insert it the wrong way:
                             translate([
                                 0,
@@ -123,31 +114,7 @@ module stem_cherry_cross(travel, diameter, sheath_length, wall_thickness, cover_
                                         diameter*4,
                                         magnet_height+magnet_tolerance], center=true);
                             }
-// NOTE: This commented-out section of code was something I tried where the part that holds the magnet slides into the stem as a separate part.  This was to make it so you could reduce the magnet wall thickness to something smaller than your minimum extrusion width by printing it flat (because layer heights can be super short).  It worked but needs lots of prototyping to get it right.  I've left the code here for now so I don't forget how I did it =)
-            // Make a hole in the end that will act as a clip to hold the magnet holder in place
-//                            translate([
-//                                0,
-//                                0,
-//                                (magnet_height+magnet_tolerance+magnet_wall_thickness/2)/2]) {
-//            // NOTE: The magnet needs to be in the same spot no matter the diameter of the stem!
-////                                    translate([0,magnet_diameter/2+magnet_distance,0.2]) // TEMP: 0.2
-////                                        roundedCube([ // Also handy for visualizing the magnet (use %)
-////                                            magnet_diameter,
-////                                            magnet_diameter,
-////                                            magnet_height+magnet_tolerance+magnet_wall_thickness/2], r=1, center=true);
-//            // This makes sure we can push the magnet out if we insert it the wrong way:
-//                                    cube([
-//                                        CHERRY_CROSS_LENGTH/3.2-magnet_wall_thickness,
-//                                        diameter*4,
-//                                        magnet_height+magnet_tolerance+magnet_wall_thickness*2.2], center=true);
-//                            }
             // Add a cutout along the bottom to reduce the amount of surface area that can rub against the flat part of the sheath (friction reduction)
-//                            translate([0,-diameter/5,0])
-//                            // This one can't be wider than the Cherry cross stem part
-//                                cube([
-//                                    CHERRY_CROSS_LENGTH/3.2,
-//                                    diameter/2.5,
-//                                    total_travel*4], center=true);
                             translate([0,-diameter/3,total_travel/2+magnet_height/2])
                             // This one further reduces the surface area--further down the shaft
                                 rotate([0,0,45]) cube([
@@ -171,89 +138,111 @@ module stem_cherry_cross(travel, diameter, sheath_length, wall_thickness, cover_
         difference() {
             union() {
                 if (!extra_tolerance) { // Normal magnet holder:
-//                    echo(old=(magnet_diameter+magnet_wall_thickness+magnet_distance/2)/1.5);
-//                    echo(new=(magnet_height+magnet_wall_thickness*2)/2+magnet_distance);
-//                    temp_magnet_distance = 2.25;
                     translate([
                         0, // NOTE that we take the magnet_void into account in the magnet holder here:
                         -(magnet_height+magnet_tolerance+magnet_wall_thickness*2)/2+stem_length/2-magnet_void/2,
-//                        (magnet_diameter+magnet_wall_thickness+temp_magnet_distance/2)/1.5
-//                        (magnet_height+magnet_tolerance+magnet_wall_thickness*2+magnet_void)/2+magnet_distance
-                        CHERRY_CROSS_LENGTH/3+magnet_distance-magnet_diameter/2
+                        CHERRY_CROSS_LENGTH/3+magnet_distance-magnet_diameter/4
                     ]) {
-                            difference() {
-                                union() {
-                                    squarish_rpoly(
-                                        xy=[
-                                            diameter,
-                                            magnet_height+magnet_tolerance+magnet_wall_thickness*2+magnet_void
-                                        ],
-                                        h=magnet_diameter+magnet_wall_thickness*2,
-                                        r=0.5, center=true);
-                                }
-                                // Match the cutout running along the main cylinder:
-                                translate([0,0,-CHERRY_CROSS_LENGTH/1.65]) rotate([90,0,0])
-                                    cylinder(
-                                        d=CHERRY_CROSS_LENGTH/2,
-                                        h=total_travel*2,
-                                        center=true);
-// Some experiments going on here...  Ignore:
-        // Cut a bit out of the top side so the part holding the magnet in the body can get closer to the stem magnet
-//                                translate([0,-magnet_diameter/2,magnet_diameter]) rotate([0,45,0])
-//                                    cube([magnet_diameter, magnet_diameter, magnet_diameter], center=true);
-                            }
+                        difference() {
+                            squarish_rpoly(
+                                xy=[
+                                    diameter,
+                                    magnet_height+magnet_tolerance+magnet_wall_thickness*2+magnet_void
+                                ],
+                                h=magnet_diameter*1.25+magnet_wall_thickness*2,
+                                r=0.5, center=true);
+                            // Match the cutout running along the main cylinder:
+                            translate([0,0,-magnet_distance+magnet_diameter/2.75]) rotate([90,0,0])
+                                cylinder(
+                                    d=CHERRY_CROSS_LENGTH/2,
+                                    h=total_travel*2,
+                                    center=true);
                         }
+                    }
                 } else { // Negative/void space version of magnet holder (for cutouts):
-                    translate([
-                        0,
-                        0,
-                        flat_back_tolerance*2])
-                            // Generate a center mark so it's easy to line up when using the negative space cutout feature with things other than void_switch.scad
-                            translate([0,-CHERRY_CROSS_LENGTH/2,CHERRY_CROSS_LENGTH/3+extra_tolerance-flat_back_tolerance*2])
-                                rotate([90,0,0])
-                                    cylinder(d=0.1, h=stem_length*2.5, center=true);
+                    // Generate a center mark so it's easy to line up when using the negative space cutout feature with things other than void_switch.scad
+                    translate([0,-CHERRY_CROSS_LENGTH/2,CHERRY_CROSS_LENGTH/3+extra_tolerance])
+                        rotate([90,0,0])
+                            cylinder(d=0.1, h=stem_length*2.5, center=true);
+                    difference() {
+                        translate([0,0,CHERRY_CROSS_LENGTH])
                             difference() {
-                                translate([0,0,CHERRY_CROSS_LENGTH])
-                                    cube([
-                                        diameter+extra_tolerance*1.33,
-                                        stem_length,
-                                        CHERRY_CYLINDER_DIAMETER/2+diameter], center=true);
-        // Add the side notches (that prevent binding at the corner opposite the bottom of the sheath):
+                                cube([
+                                    diameter+extra_tolerance*1.33,
+                                    stem_length,
+                                    CHERRY_CYLINDER_DIAMETER/2+diameter], center=true);
                                 translate([
-                                    diameter/(1.5/(1+notch_angle/38))+extra_tolerance*1.65,
-                                    0,
-                                    diameter-diameter/3.25+extra_tolerance/2])
-                            // This slightly-rotated bit is so the notch cutout gets slightly wider at the end (to reduce the chance of the stem getting stuck):
-                                        rotate([0,45,-notch_angle]) cube([
-                                            diameter/2,
-                                            stem_length+1,
-                                            diameter/2], center=true);
-                                translate([
-                                    -diameter/(1.5/(1+notch_angle/38))-extra_tolerance*1.65,
-                                    0,
-                                    diameter-diameter/3.25+extra_tolerance/2])
-                            // This slightly-rotated bit is so the notch cutout gets slightly wider at the end (to reduce the chance of the stem getting stuck):
-                                        rotate([0,-45,notch_angle]) cube([
-                                            diameter/2,
-                                            stem_length+1,
-                                            diameter/2], center=true);
+                                  0,
+                                  -stem_length/2+magnet_wall_thickness/2,
+                                  magnet_diameter/2+magnet_wall_thickness-0.075])
+                                    difference() {
+                                        cube([
+                                          sheath_width-magnet_wall_thickness*2,
+                                          magnet_wall_thickness,
+                                          magnet_wall_thickness*2.5], center=true);
+                                        translate([
+                                          0,
+                                          magnet_wall_thickness*1.5,
+                                          -magnet_wall_thickness*1.75])
+//                                          rotate([45,0,0])
+                                            cube([
+                                              sheath_width-magnet_wall_thickness*2,
+                                              magnet_wall_thickness*4,
+                                              magnet_wall_thickness*4], center=true);
+                                    }
                             }
+// Add the side notches (that prevent binding at the corner opposite the bottom of the sheath):
+                        translate([
+                          diameter/(1.5/(1+notch_angle/38))+extra_tolerance*1.65,
+                          0,
+                          diameter-diameter/3.25+extra_tolerance/2])
+    // This slightly-rotated bit is so the notch cutout gets slightly wider at the end (to reduce the chance of the stem getting stuck):
+                            rotate([0,45,-notch_angle]) cube([
+                                diameter/2,
+                                stem_length+1,
+                                diameter/2], center=true);
+                        translate([
+                          -diameter/(1.5/(1+notch_angle/38))-extra_tolerance*1.65,
+                          0,
+                          diameter-diameter/3.25+extra_tolerance/2])
+    // This slightly-rotated bit is so the notch cutout gets slightly wider at the end (to reduce the chance of the stem getting stuck):
+                            rotate([0,-45,notch_angle]) cube([
+                                diameter/2,
+                                stem_length+1,
+                                diameter/2], center=true);
+                    }
                 }
             }
             if (!extra_tolerance) {
-                // Cutout for the magnet (NOTE: No tolerance for the diameter so it gets squeezed in tight):
+            // Cutout for the magnet (NOTE: No tolerance for the diameter so it gets squeezed in tight):
                 translate([
                     0,
                     -(magnet_height+magnet_tolerance)/2-magnet_wall_thickness+stem_length/2,
-//                    magnet_diameter/2+diameter/4+magnet_distance
-//                    CHERRY_CROSS_LENGTH/3+magnet_distance-magnet_diameter/2
-                    CHERRY_CROSS_LENGTH/3+magnet_distance-0.1
-                ])
-                        rotate([90,0,0]) hull() {
+                    CHERRY_CROSS_LENGTH/2.25+magnet_distance
+                ]) {
+                        rotate([90,0,0])
                             cylinder(d=adjusted_magnet_diameter, h=magnet_height+magnet_tolerance, center=true);
-                            translate([0,magnet_diameter,0])
-                                cylinder(d=adjusted_magnet_diameter, h=magnet_height+magnet_tolerance, center=true);
+                    cube([adjusted_magnet_diameter-magnet_tolerance,magnet_height+magnet_tolerance,magnet_diameter], center=true);
+                    // Cut a slot for the bits in the sheath that hold the magnet in place (not sure why I need the -0.075...)
+                    translate([0,-magnet_height/2-(magnet_wall_thickness+magnet_void)/2-magnet_tolerance/2,magnet_diameter/2.65])
+                        difference() {
+                            cube([
+                              magnet_diameter+magnet_wall_thickness*2.85,
+                              magnet_wall_thickness+magnet_void+0.01,
+                              magnet_diameter], center=true);
+    // This cube gives the magnet a little bar that prevents it from falling out (forwards)
+                            translate([0,magnet_wall_thickness+magnet_tolerance,(magnet_wall_thickness*4.75)/2-magnet_wall_thickness]) 
+                              cube([
+                                magnet_diameter+magnet_wall_thickness*2.85,
+                                magnet_wall_thickness*10,
+                                magnet_wall_thickness*4.75], center=true);
                         }
+                // No reason for the top end of the stem to stick out very far, this cuts it off a bit:
+                translate([0,(-magnet_height-magnet_void)/2-magnet_height/2-magnet_wall_thickness-0.1,magnet_height]) cube([
+                  magnet_diameter+magnet_wall_thickness*2.85,
+                  magnet_height+magnet_void,
+                  magnet_diameter], center=true);
+                }
                 // This is so you can push the magnet out if you have the wrong pole facing down:
                 translate([
                   0,
@@ -274,11 +263,6 @@ module stem_cherry_cross(travel, diameter, sheath_length, wall_thickness, cover_
                         diameter/2,
                         stem_length+1,
                         diameter/2], center=true);
-//                #translate([diameter/1.475,0,diameter-diameter/3.25])
-//                    rotate([0,45,0]) cube([
-//                        diameter/2,
-//                        stem_length,
-//                        diameter/2], center=true);
                 // Remove a bit of material before and after the part that actually touches the sides of the sheath so as to minimize surface contact area:
                 touching_part_width = 0.5;
                 touching_part_depth = 0.15;
@@ -302,7 +286,7 @@ module stem_cherry_cross(travel, diameter, sheath_length, wall_thickness, cover_
                 %translate([
                   0,
                   -(magnet_height+magnet_tolerance)/2-magnet_wall_thickness+stem_length/2,
-                  CHERRY_CROSS_LENGTH/3+magnet_distance
+                  CHERRY_CROSS_LENGTH/2.25+magnet_distance
                   ])
                     rotate([90,0,0])
                         cylinder(d=magnet_diameter, h=magnet_height, center=true);
@@ -387,11 +371,6 @@ module stem_cherry_cross_split(travel, diameter, sheath_length, wall_thickness, 
                                 0,
                                 (magnet_height+magnet_tolerance+magnet_wall_thickness/2)/2+magnet_wall_thickness*1.75]) {
             // NOTE: The magnet needs to be in the same spot no matter the diameter of the stem!
-//                                    translate([0,magnet_diameter/2+magnet_distance,0.2]) // TEMP: 0.2
-//                                        roundedCube([ // Also handy for visualizing the magnet (use %)
-//                                            magnet_diameter,
-//                                            magnet_diameter,
-//                                            magnet_height+magnet_tolerance+magnet_wall_thickness/2], r=1, center=true);
             // This makes sure we can push the magnet out if we insert it the wrong way:
                                     cube([
                                         CHERRY_CROSS_LENGTH/3.2,
@@ -403,12 +382,6 @@ module stem_cherry_cross_split(travel, diameter, sheath_length, wall_thickness, 
                                 0,
                                 0,
                                 (magnet_height+magnet_tolerance+magnet_wall_thickness/2)/2]) {
-            // NOTE: The magnet needs to be in the same spot no matter the diameter of the stem!
-//                                    translate([0,magnet_diameter/2+magnet_distance,0.2]) // TEMP: 0.2
-//                                        roundedCube([ // Also handy for visualizing the magnet (use %)
-//                                            magnet_diameter,
-//                                            magnet_diameter,
-//                                            magnet_height+magnet_tolerance+magnet_wall_thickness/2], r=1, center=true);
             // This makes sure we can push the magnet out if we insert it the wrong way:
                                     cube([
                                         CHERRY_CROSS_LENGTH/3.2-magnet_wall_thickness,
@@ -440,99 +413,14 @@ module stem_cherry_cross_split(travel, diameter, sheath_length, wall_thickness, 
             translate([0,0,-CHERRY_CYLINDER_DIAMETER/2-extra_tolerance])
                 cube([500,500,CHERRY_CYLINDER_DIAMETER], center=true);
         }
-        // Add the end cap/magnet holder
-//        difference() {
-//            union() {
-//                if (!extra_tolerance) { // Normal magnet holder:
-//                    translate([
-//                        0,
-//                        -(magnet_height+magnet_tolerance+magnet_wall_thickness*2)/2+stem_length/2,
-//                        (magnet_diameter+magnet_wall_thickness+magnet_distance/2)/1.3])
-//                            difference() {
-//                                roundedCube([
-//                                    diameter,
-//                                    magnet_height+magnet_tolerance+magnet_wall_thickness*2,
-//                                    magnet_diameter+magnet_wall_thickness+magnet_distance/2],
-//                                    r=0.5,center=true);
-//                                // Match the cutout running along the main cylinder:
-//                                translate([0,0,-CHERRY_CROSS_LENGTH/1.65]) rotate([90,0,0])
-//                                    cylinder(
-//                                        d=CHERRY_CROSS_LENGTH/2,
-//                                        h=total_travel*4,
-//                                        center=true);
-//                            }
-//                } else { // Negative/void space version of magnet holder (for cutouts):
-//                    translate([
-//                        0,
-//                        0,
-//                        extra_tolerance/2])
-//                            difference() {
-//                                translate([0,0,(magnet_diameter*2+wall_thickness)/2-extra_tolerance])
-//                                    cube([
-//                                        diameter+extra_tolerance*2,
-//                                        stem_length,
-//                                        magnet_diameter*2+wall_thickness], center=true);
-//        // Add the side notches (that prevent binding at the corner opposite the bottom of the sheath):
-//                                translate([
-//                                    diameter/2+extra_tolerance*1.5,
-//                                    0,
-//                                    diameter/1.45+extra_tolerance/2])
-//                                        rotate([0,45,0]) cube([
-//                                            diameter/4,
-//                                            stem_length+1,
-//                                            diameter/4], center=true);
-//                                translate([
-//                                    -diameter/2-extra_tolerance*1.5,
-//                                    0,
-//                                    diameter/1.45+extra_tolerance/2])
-//                                        rotate([0,-45,0]) cube([
-//                                            diameter/4,
-//                                            stem_length+1,
-//                                            diameter/4], center=true);
-//                            }
-//                }
-//            }
-//            if (!extra_tolerance) {
-//                // Cutout for the magnet (NOTE: No tolerance for the diameter so it gets squeezed in tight):
-////                translate([
-////                    0,
-////                    -(magnet_height+magnet_tolerance)/2-magnet_wall_thickness+stem_length/2-.2,
-////                    magnet_diameter/2+diameter/4+magnet_distance]) // TEMP: -.2
-////                        cube([
-////                            magnet_diameter, // No tolerance here--meant to be tight (cram it in!)
-////                            magnet_height+magnet_tolerance,
-////                            magnet_diameter], center=true);
-//                // This is so you can push the magnet out if you have the wrong pole facing down:
-//                translate([0,stem_length/2-(CHERRY_CROSS_LENGTH/3.2)/2-magnet_wall_thickness-magnet_tolerance,0])
-//                    cube([CHERRY_CROSS_LENGTH/3.2,CHERRY_CROSS_LENGTH/3.2,100], center=true);
-//                // Side channel (slides into the sheath's notches/cutouts)
-//                translate([diameter/2,0,diameter/1.4])
-//                    rotate([0,45,0]) cube([
-//                        diameter/4,
-//                        stem_length+1,
-//                        diameter/4], center=true);
-//                translate([-diameter/2,0,diameter/1.4])
-//                    rotate([0,-45,0]) cube([
-//                        diameter/4,
-//                        stem_length+1,
-//                        diameter/4], center=true);
-//            }
-//        }
     }
     // Generate the magnet holder that attaches to the stem
-    // TEMP:
-//    translate([0,10.25,-9.8]) rotate([90,0,0]) {
     translate([0,total_travel*2,(magnet_height+magnet_tolerance+magnet_wall_thickness*2)/2]) {
         rotate([90,0,0]) difference() {
             squarish_rpoly(
                 xy=[diameter, magnet_height+magnet_tolerance+magnet_wall_thickness*2],
                 h=magnet_diameter+magnet_wall_thickness+magnet_distance/2,
                 r=0.5, center=true);
-//            roundedCube([
-//                diameter,
-//                magnet_height+magnet_tolerance+magnet_wall_thickness*2,
-//                magnet_diameter+magnet_wall_thickness+magnet_distance/2],
-//                r=0.5, center=true);
             translate([0,0,magnet_diameter*1.5-magnet_tolerance]) rotate([0,45,0]) cube([
                 magnet_diameter*2,
                 magnet_diameter*2,
@@ -564,84 +452,6 @@ module stem_cherry_cross_split(travel, diameter, sheath_length, wall_thickness, 
                 h=magnet_height+magnet_tolerance+magnet_wall_thickness*2, center=true);
         
     }
-//    }
-//    translate([0,total_travel+magnet_height+magnet_wall_thickness,0]) difference() {
-//        union() {
-//            if (!extra_tolerance) { // Normal magnet holder:
-//                translate([
-//                    0,
-//                    -(magnet_height+magnet_tolerance+magnet_wall_thickness*2)/2+stem_length/2,
-//                    (magnet_diameter+magnet_wall_thickness+magnet_distance/2)/1.3])
-//                        difference() {
-//                            roundedCube([
-//                                diameter,
-//                                magnet_height+magnet_tolerance+magnet_wall_thickness*2,
-//                                magnet_diameter+magnet_wall_thickness+magnet_distance/2],
-//                                r=0.5,center=true);
-//                            // Match the cutout running along the main cylinder:
-//                            translate([0,0,-CHERRY_CROSS_LENGTH/1.65]) rotate([90,0,0])
-//                                cylinder(
-//                                    d=CHERRY_CROSS_LENGTH/2,
-//                                    h=total_travel*4,
-//                                    center=true);
-//                        }
-//            } else { // Negative/void space version of magnet holder (for cutouts):
-//                translate([
-//                    0,
-//                    0,
-//                    extra_tolerance/2])
-//                        difference() {
-//                            translate([0,0,(magnet_diameter*2+wall_thickness)/2-extra_tolerance])
-//                                cube([
-//                                    diameter+extra_tolerance*2,
-//                                    stem_length,
-//                                    magnet_diameter*2+wall_thickness], center=true);
-//    // Add the side notches (that prevent binding at the corner opposite the bottom of the sheath):
-//                            translate([
-//                                diameter/2+extra_tolerance*1.5,
-//                                0,
-//                                diameter/1.45+extra_tolerance/2])
-//                                    rotate([0,45,0]) cube([
-//                                        diameter/4,
-//                                        stem_length+1,
-//                                        diameter/4], center=true);
-//                            translate([
-//                                -diameter/2-extra_tolerance*1.5,
-//                                0,
-//                                diameter/1.45+extra_tolerance/2])
-//                                    rotate([0,-45,0]) cube([
-//                                        diameter/4,
-//                                        stem_length+1,
-//                                        diameter/4], center=true);
-//                        }
-//            }
-//        }
-//        if (!extra_tolerance) {
-//            // Cutout for the magnet (NOTE: No tolerance for the diameter so it gets squeezed in tight):
-////                translate([
-////                    0,
-////                    -(magnet_height+magnet_tolerance)/2-magnet_wall_thickness+stem_length/2-.2,
-////                    magnet_diameter/2+diameter/4+magnet_distance]) // TEMP: -.2
-////                        cube([
-////                            magnet_diameter, // No tolerance here--meant to be tight (cram it in!)
-////                            magnet_height+magnet_tolerance,
-////                            magnet_diameter], center=true);
-//            // This is so you can push the magnet out if you have the wrong pole facing down:
-//            translate([0,stem_length/2-(CHERRY_CROSS_LENGTH/3.2)/2-magnet_wall_thickness-magnet_tolerance,0])
-//                cube([CHERRY_CROSS_LENGTH/3.2,CHERRY_CROSS_LENGTH/3.2,100], center=true);
-//            // Side channel (slides into the sheath's notches/cutouts)
-//            translate([diameter/2,0,diameter/1.4])
-//                rotate([0,45,0]) cube([
-//                    diameter/4,
-//                    stem_length+1,
-//                    diameter/4], center=true);
-//            translate([-diameter/2,0,diameter/1.4])
-//                rotate([0,-45,0]) cube([
-//                    diameter/4,
-//                    stem_length+1,
-//                    diameter/4], center=true);
-//        }
-//    }
 }
 
 // This makes the + bit that slides *in* to a Cherry MX style keycap:

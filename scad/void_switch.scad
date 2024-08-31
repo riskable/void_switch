@@ -1,7 +1,7 @@
 // 3D printable magnetic separation key switch suitable for use via reed switches or hall effect sensors
 
 // AUTHOR: Riskable <riskable@youknowwhat.com>
-// VERSION: 1.4 (Changelog is at the bottom)
+// VERSION: 2.0 (Changelog is at the bottom)
 // LICENSE: TBD. Do not sell Void Switches (yet!) but feel free to make your own for personal use.
 // LICENSING NOTE: If you want to sell keyboards/switches using this design just let me know and we'll work something out! I'll help you make awesome stuff!
 
@@ -41,7 +41,7 @@ use <utils.scad>
 // IMPORTANT VARIABLES (customize to your liking):
 
 // The amount of space interposed between the magnets. Controls how strong the switch will be; The higher the value the less force will be required to press the switch. Look at the console output to see the calculated switch strength (e.g. "NOTE: ESTIMATED STRENGTH/FORCE: ~56g"). Highly dependent on the strength and thickness of your magnets.
-MAGNET_VOID = 0.9; // [0.1:0.1:3]
+MAGNET_VOID = 1.0; // [0.1:0.1:3]
 /* MAGNET_VOID NOTES:
     * The higher the MAGNET_VOID the lower the (initial) force to move (press) the switch.
     * You're just going to have to experiment with a few different values here to see what you like.
@@ -50,17 +50,17 @@ MAGNET_VOID = 0.9; // [0.1:0.1:3]
 // 2-4mm of travel is traditional for mechanical key switches
 TOTAL_TRAVEL = 4; // [1:0.1:20]
 // How much extra space (up/down) will be used to contain the stem (does not impact TOTAL_TRAVEL).  Longer == less wobble BUT the switch will be taller.  Doesn't really impact the feel of the switch otherwise.
-SHEATH_LENGTH = 0.3; // [0:0.1:2]
+SHEATH_LENGTH = 0.2; // [0:0.1:2]
 // Wiggle room inside the sheath for the stem. If your stem doesn't effortlessly slide inside the sheath you need to increase the tolerance or check your printing layer height isn't messing with it.
-STEM_TOLERANCE = 0.13; // [0.01:0.01:0.3]
+STEM_TOLERANCE = 0.11; // [0.01:0.01:0.3]
 //   ^ IMPORTANT!  If the stem doesn't effortlessly slide in and out of the sheath or has far too much back-corner/front-corner wobble double-check that your printing layer height isn't messing with the tolerances: With STEM_WALL_THICKNESS=1.2 the bottom layer of the sheath where it touches the stem is precisely 1.68mm tall.  Your layer height can impact this value considerably which is why a 0.28mm layer height is recommended (for FDM) as this results in that layer being precisely 1.68mm above the bed.
 // NOTE: Also remember that YOU CAN ALWAYS SAND THE STEM IF IT'S TOO TIGHT.  As long as you get up to like 600 grit (or higher) your switch should still be nice and smooth (eventually--after some normal use).
 // NOTE: You can visualize STEM_TOLERANCE by uncommenting the "visualize" RENDER bits at the top of this file.
 // Diameter of the magnet that sits on top of the switch body
 BODY_MAGNET_DIAMETER = 4; // [3:1:5]
 // Thickness of the top magnet (use calipers to measure it!). NOTE: Cheap "4x2mm" N35 magnets are usually 4x1.7 or 4x1.8mm.  MEASURE YOUR MAGNETS WITH CALIPERS TO CHECK!
-BODY_MAGNET_HEIGHT = 1.7; // [1:0.1:3]
-// NOTE: CHINESE SELLERS LIE! ~1.7mm is the norm for "4x2mm" N35 magnets... Bastards
+BODY_MAGNET_HEIGHT = 1.8; // [1:0.1:3]
+// NOTE: CHINESE SELLERS LIE! ~1.75mm is the norm for "4x2mm" N35 magnets... Bastards
 
 // Only used when calculating the strength of your switch (it gets spit out to the OpenSCAD console... "NOTE: ESTIMATED STRENGTH/FORCE: ~56g"). NOTE: Does not include the force added by the levitator!
 MAGNET_STRENGTH = "N35"; // [N35, N42, N45, N52]
@@ -79,7 +79,7 @@ STEM_CROSS_Y_EXTRA = 0.0; // [-0.3:0.05:0.3]
 // Wiggle room (from a magnet height perspective, not from a diameter perspective)
 MAGNET_TOLERANCE = 0.1;
 // How much room (diameter-wise) the magnet gets inside the stem.  Negative tolerance by default to hold the magnet tight (really press it in there). PLA and PETG should flex a bit and hold it strongly. For resin you'll probably want to set this to 0 and put some resin in the hole before inserting the magnet to hold it nice and strong.
-STEM_MAGNET_DIAMETER_TOLERANCE = -0.1;
+STEM_MAGNET_DIAMETER_TOLERANCE = 0.05;
 // TIP FOR RESIN PRINTERS: Set STEM_MAGNET_DIAMETER_TOLERANCE to 0 or 0.05 to avoid cracking and and squirt some resin in there before inserting the magnet for a strong hold.
 // How much plastic goes around the magnets (not usually important; you can make this smaller if you use a nozzle smaller than 0.4mm to increase your switch's maximum theoretical strength)
 MAGNET_WALL_THICKNESS = 0.5;
@@ -160,6 +160,8 @@ $fn = 64;
 
 // Choose what to render. Options are: "body", "sheath", "stem", "body+sheath" (for resin/high res printers), "%body" (for transparent body), "visualize_keyup", "visualize_keydown", "switch_plate". Example to visualize the switch sitting in your keyboard: ["%body", "visualize_keyup", "switch_plate"];
 RENDER = ["body", "sheath", "stem"];
+// USE THIS IF YOU DON'T NEED THE BODY (e.g. you designed your own case using the new sheath negative in sheath_negative.scad)
+//RENDER = ["stem", "sheath"];
 //RENDER = ["sheath_double_sided", ""];
 // You can combine the body and sheath into a single unit if you have a resin printer since the resolution is tight enough that you don't need to worry about the orientation of the layer lines:
 //RENDER = ["body+sheath", "stem"];
@@ -194,7 +196,7 @@ STABILIZER_STEM = false;
 SHEATH_HOLDS_MAGNET = true;
 
 // Try to calculate the strength of the switch in grams and output that to the console
-display_magnet_strength(BODY_MAGNET_DIAMETER, BODY_MAGNET_HEIGHT, MAGNET_VOID, strength=MAGNET_STRENGTH);
+display_magnet_strength(BODY_MAGNET_DIAMETER, BODY_MAGNET_HEIGHT, MAGNET_VOID, strength=MAGNET_STRENGTH); 
 
 // These variables are used below for placement of things:
 sheath_height = STEM_DIAMETER+SHEATH_WALL_THICKNESS*2;
@@ -325,7 +327,7 @@ for (item=RENDER) {
             height=BODY_HEIGHT);
     } else if (item=="sheath") {
         translate([BODY_LENGTH/1.05,0,0]) // Move it over to the side (but keep it tight so we can print more at a time!)
-            rotate([0,0,0]) // Line it up
+            rotate([0,0,180]) // Line it up
                 sheath_cherry_cross(SHEATH_LENGTH, STEM_DIAMETER, TOTAL_TRAVEL, COVER_THICKNESS,
                     stem_tolerance=STEM_TOLERANCE,
                     sheath_tolerance=SHEATH_TOLERANCE,
@@ -587,4 +589,10 @@ for (item=RENDER) {
         * stabilizer.scad: The default STAB_MAGNET_HEIGHT was changed from 1.8 to 2 since the stabilizers aren't that picky (even if you have 1.7mm thick magnets they'll still work just fine in a stab made for 2mm).
         * Added pregenerated stabilizer STL and 3MF files along with pregenerated files for extra clips (because they're easy to lose/break).
         * Fixed a few places where the new SHEATH_MAGNET_WALL_THICKNESS variable was missing.
+    1.5:
+        * Fixed a minor alignment issue with the cylinder that gets cut out of the center of the stem.
+    2.0:
+        * MAJOR CHANGES: Redesigned sheath + stem to better hold the magnet (glue isn't needed anymore to ensure long-term stability of the magnets) as well as to allow insertion of the magnet from the top in the sheath (so it matches the stem; this will allow automated insertion eventually).
+        * Sheath and stem are now rotated so that their cooling-sensitive parts are in alignment (so you can make sure your 3D printer's blower fan cools them both equally while printing).
+        * YOU NO LONGER NEED THE SWITCH BODY AT ALL!  The switch will hold the magnets (strongly) and function perfectly with JUST the sheath + stem.  You can use the modules in sheath_negative.scad to make a negative space cutout for the sheath in your top plate.  That way you can skip printing the body part and just snap the sheath + stem as-is directly into your top plate.
 */

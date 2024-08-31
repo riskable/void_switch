@@ -36,7 +36,7 @@ PLATE_THICKNESS = 1.5; // [0:0.1:1.5]
 // Copy setting from void_switch.scad
 SHEATH_LIP_HEIGHT = 0.8; // [0.5:0.1:1.5]
 // Copy setting from void_switch.scad
-SHEATH_LENGTH = 0.3; // [0:0.1:2]
+SHEATH_LENGTH = 0.2; // [0:0.1:2]
 // Copy setting from void_switch.scad
 WALL_THICKNESS = 1.35;
 // Copy setting from void_switch.scad
@@ -117,10 +117,10 @@ module backforce_levitation_jig(length, width, stem_diameter=CHERRY_CYLINDER_DIA
 // Make the thing that holds the wire in place
 module wire_retention_arm(travel, length, wire_diameter, wire_tolerance, wall_thickness, wire_distance=0.25) {
     // NOTE: wire_distance controls how far behind the stabilizer the wire will be held.  The bigger the value the stronger the force will be to get the stab stem moving.  Doesn't impact return strength that much though.
-    pin_diameter = 1.875;
+    pin_diameter = 2;
     pin_offset = 0.2; // How far away from the magnet holder the pins holes will be
     pin_height = 2;
-    thickness = 1;
+    thickness = 1.2;
     // base_height matches the height of the pins in stabilizer_body_cherry_cross():
     base_height = pin_diameter/2+wall_thickness;
     x = pin_diameter*2+base_height+wire_diameter+wire_distance;
@@ -133,9 +133,9 @@ module wire_retention_arm(travel, length, wire_diameter, wire_tolerance, wall_th
             cylinder(d=wire_diameter+wire_tolerance, h=thickness*10, center=true);
     }
     // Add the little pegs that stick out
-    translate([0,0,pin_height/2+thickness])
+    translate([pin_offset,0,pin_height/2+thickness])
         cylinder(d=pin_diameter, h=pin_height, center=true, $fn=8);
-    translate([-pin_diameter,0,pin_height/2+thickness])
+    translate([-pin_diameter+pin_offset,0,pin_height/2+thickness])
         cylinder(d=pin_diameter, h=pin_height, center=true, $fn=8);
 }
 
@@ -154,7 +154,7 @@ module stabilizer_body_cherry_cross(length, stem_diameter, travel, plate_thickne
     tactile_bump_width = 1.35; // Three standard .4mm nozzle extrusion widths
     tactile_bump_height = 0.4;
     center_correction = 0.25; // Cherry stem plate holes are actually not centered under the stabilizer stem holes!  They're slightly to the left and right on each side.  This value corrects for that off-centered-ness.
-    pin_diameter = 1.875; // Need to match everything else
+    pin_diameter = 2; // Need to match everything else
     pin_offset = 0.2; // How far away from the magnet holder the pins holes will be
     negative_magnet_tolerance = 0.1;
     difference() {

@@ -62,13 +62,12 @@ module sheath_cherry_cross(length, stem_diameter, travel, cover_thickness,
                     }
                 translate([ // Generate the ring around the magnet (that holds it in place)
                   0,
-                  -sheath_overall_length/2+top_magnet_height/2+magnet_wall_thickness+length/2+0.001,
-//                  top_magnet_diameter+magnet_wall_thickness/2+magnet_tolerance/2
+                  -sheath_overall_length/2+top_magnet_height/2+magnet_wall_thickness*1.5+length/2+0.001,
                     -sheath_height/2+(top_magnet_diameter+magnet_wall_thickness*3)/2+stem_diameter
                 ])
                     rotate([90,0,0])
                         difference() {
-                            cylinder(d=top_magnet_diameter+magnet_wall_thickness*3, h=top_magnet_height+magnet_wall_thickness*2+length, center=true);
+                            cylinder(d=top_magnet_diameter+magnet_wall_thickness*3, h=top_magnet_height+magnet_wall_thickness*3+length, center=true);
                         }
             }
         }
@@ -76,12 +75,13 @@ module sheath_cherry_cross(length, stem_diameter, travel, cover_thickness,
         translate([0,0,-250])
             cube([500, 500, 500], center=true);
         // Use the stem's void space/negative cutout feature (extra_tolerance) to carve out a space for itself:
+        stem_cutout_floor = CHERRY_CYLINDER_DIAMETER/2-wall_thickness/1.05+stem_tolerance/3;
         translate([
             0,
             -(sheath_overall_length)/2+top_magnet_height+lip_height-top_magnet_cover_thickness+length,
         // NOTE: We use CHERRY_CYLINDER_DIAMTER/2 because that's what stem.scad uses to flatten the underside of the stem (the two have to match)
-            CHERRY_CYLINDER_DIAMETER/2-wall_thickness/1.05+stem_tolerance/3
-        ])
+            stem_cutout_floor
+        ]) {
                 stem_cherry_cross(total_travel,
                     stem_diameter, length, wall_thickness, cover_thickness,
                     magnet_height=magnet_height, magnet_diameter=magnet_diameter,
@@ -89,6 +89,8 @@ module sheath_cherry_cross(length, stem_diameter, travel, cover_thickness,
                     magnet_wall_thickness=magnet_wall_thickness,
                     lip_height=lip_height, extra_tolerance=stem_tolerance,
                     notch_angle=notch_angle);
+           }
+        // Cut a little extra up top in the event that the stem's void space feature doesn't cover everything
         if (!inside_body) {
             // Add the cutout on the bottom for snap fit in the body
             translate([
@@ -100,30 +102,50 @@ module sheath_cherry_cross(length, stem_diameter, travel, cover_thickness,
                 0, // The longer one
                 cover_thickness*2+sheath_tolerance,
                 wall_thickness/2-0.01])
-                    cube([bottom_clip_width, sheath_overall_length-sheath_tolerance-lip_height*2, wall_thickness*2], center=true);
+                    cube([bottom_clip_width,sheath_overall_length-sheath_tolerance-lip_height*2, wall_thickness*2], center=true);
         }
         // The sheath doesn't actually need to be higher than the > < (notches) part so we remove the excess material to make it less likely that a squished magnet (pushing the sides of its holder outwards) will result in stiction
         translate([
           0,
           lip_height+length+top_magnet_height,
-          sheath_height/2+sheath_height-wall_thickness-stem_tolerance])
-            cube([sheath_width*2,sheath_overall_length,sheath_height], center=true);
-        // Add a cutout along the center to ensure the layer lines get extruded paralell to the motion of the stem (no infill)
+          sheath_height/2+stem_cutout_floor+stem_diameter-stem_diameter/8])
+      // NOTE: Stem uses `stem_diameter-stem_diameter/3.25+extra_tolerance/2` to determine the height of the notches and the notches themselves are stem_diameter/2
+            difference() {
+                cube([sheath_width*2,sheath_overall_length,sheath_height], center=true);
+                translate([0,0,-sheath_height/1.5])
+                    cube([stem_diameter+sheath_tolerance-0.01,sheath_overall_length*2,sheath_height], center=true);
+            }
+        // Add a cylindrical cutout along the center to ensure the layer lines get extruded paralell to the motion of the stem (no infill)
         translate([0,0,stem_diameter/2+wall_thickness/2])
             scale([0.9,1,0.85]) rotate([90,0,0])
                 cylinder(d=stem_diameter, h=sheath_overall_length*2, center=true);
         // Carve out a space for the magnet
         translate([
           0,
-          -sheath_overall_length/2+top_magnet_height/2-top_magnet_cover_thickness+lip_height+length,
-//          stem_diameter+wall_thickness/2+top_magnet_diameter/1.75
+          -sheath_overall_length/2+(top_magnet_height+magnet_tolerance)/2-top_magnet_cover_thickness+lip_height+length-magnet_tolerance+0.01,
           top_magnet_diameter/2+stem_diameter+magnet_wall_thickness*1.5
           ]) {
             rotate([90,0,0])
-                cylinder(d=top_magnet_diameter+magnet_diameter_tolerance, h=top_magnet_height+0.05, center=true);
+                cylinder(d=top_magnet_diameter+magnet_diameter_tolerance, h=top_magnet_height+magnet_tolerance, center=true);
         // Visualize the magnet
-            %rotate([90,0,0])
+            %translate([0,-magnet_tolerance,0]) rotate([90,0,0])
                 cylinder(d=top_magnet_diameter, h=top_magnet_height, center=true);
+        }
+        // Cut a hole in the top of the magnet area so the magnet can be inserted sideways (as opposed to awkwardly-press-fit from below like the old way)
+        translate([
+          0,
+          -sheath_overall_length/2+(top_magnet_height+magnet_tolerance)/2-top_magnet_cover_thickness+lip_height+length-magnet_tolerance+0.01,
+          top_magnet_diameter+stem_diameter+magnet_wall_thickness*1.5
+          ]) {
+            cube([top_magnet_diameter-magnet_tolerance,top_magnet_height+magnet_tolerance,top_magnet_diameter+magnet_diameter_tolerance], center=true);
+        }
+        // Flatten the circular part of the sheath so that we can squeeze the magnet in there with a tool and have it sit flush with the edge (no need to squeeze it *past* the edge in order to get a full fit)
+        translate([
+          0,
+          -sheath_overall_length/2+(top_magnet_height+magnet_tolerance)/2-top_magnet_cover_thickness+lip_height+length-magnet_tolerance+0.01,
+          top_magnet_diameter/2+stem_diameter+magnet_wall_thickness*1.5+top_magnet_diameter
+          ]) {
+            cube([top_magnet_diameter*2,top_magnet_height*4+magnet_tolerance,top_magnet_diameter+magnet_diameter_tolerance], center=true);
         }
         if (!snug_magnet) {
         // This removes the material that goes around the magnet in the sheath in case you want to try that other way of holding the magnet in (see similar comment in body.scad).
@@ -145,33 +167,6 @@ module sheath_cherry_cross(length, stem_diameter, travel, cover_thickness,
                     text(tolerance_text, size=2.5, font="Ubuntu:style=Bold");
         }
     }
-    // NOTE: Disabled this since there's nothing for them to clip on at the moment (needs work in body.scad)
-//    translate([ // Top left pip
-//        -sheath_width/2+(wall_thickness-stem_tolerance)/2,
-//        -sheath_overall_length/2+lip_height+sheath_tolerance+snap_pip_length/2+cover_thickness,
-//        sheath_height])
-//            difference() { // Cut off the bottom to make it flat so we can have a thin wall on top
-//                rotate([-10,0,0])
-//                    cube([
-//                        wall_thickness-stem_tolerance,
-//                        snap_pip_length,
-//                        snap_pip_height], center=true);
-//                translate([0,0,-0.51])
-//                    cube([5, 5, 1], center=true); // Extra 0.01 is just for rendering
-//            }
-//    translate([ // Top right pip
-//        sheath_width/2-(wall_thickness-stem_tolerance)/2,
-//        -sheath_overall_length/2+lip_height+sheath_tolerance+snap_pip_length/2+cover_thickness,
-//        sheath_height])
-//            difference() { // Cut off the bottom to make it flat so we can have a thin wall on top
-//                rotate([-10,0,0])
-//                    cube([
-//                        wall_thickness-stem_tolerance,
-//                        snap_pip_length,
-//                        snap_pip_height], center=true);
-//                translate([0,0,-0.51])
-//                    cube([5, 5, 1], center=true); // Extra 0.01 is just for rendering
-//            }
     if (!inside_body) {
         pip_rotation = 20;
         translate([ // Right side pip (bottom)
