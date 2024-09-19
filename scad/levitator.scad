@@ -20,7 +20,7 @@ WALL_THICKNESS = 0.8; // How thick around the edges you want it to be (0.8 is fi
 STEM_TOLERANCE = 0.15; // How tight the cross-shaped cutout will be
 MAGNET_TOLERANCE = 0.2; // Only used with MAGNET_HEIGHT (because we have some bridging)
 MAGNET_DIAMETER = 4;
-MAGNET_HEIGHT = 2;
+MAGNET_HEIGHT = 2; // [1:0.1:3]
 MAGNET_DISTANCE = 3.75; // Distance from the center of the stem where the magnet goes
 
 // Constants
